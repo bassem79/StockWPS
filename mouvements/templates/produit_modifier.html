@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} 
+<title>{{ prd.nom_produit }}</title>
+ {% endblock %}
+
+{% block content %}
+
+<img src="{% if prd.image %}{{ prd.image.url }}{% else %}
+{% static "img/benestar.jpg" %}{% endif %}">
+
+<form method="post" enctype='multipart/form-data' > 
+    {% csrf_token %} 
+    {{ form.as_p }} 
+    <input type="submit" value="Enregistrer"> 
+</form> 
+
+
+<br><br><br><br>
+<h4><a href="{% url 'stock:produit_list' %}">Retour vers la Liste des produits</a></h4>
+<h4><a href="{% url 'stock:produit_ajouter' %}">Ajouter un produit</a></h4>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

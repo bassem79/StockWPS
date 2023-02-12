@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}<title>vente max</title>{% endblock %}
+
+{% block content %}
+
+<table border>
+    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
+    
+    </table>
+<br><br><br><br>
+
+<h5>Filtrer les ventes par période :</h5>
+
+<ul> 
+<li><a href="{% url 'stock:vente_ca_period' '1' %}">Aujourd'hui</a></li>
+<li><a href="{% url 'stock:vente_ca_period' '2' %}">Hier</a></li>
+<li><a href="{% url 'stock:vente_ca_period' '3' %}">Cette semaine</a></li>
+<li><a href="{% url 'stock:vente_ca_period' '4' %}">Ce mois</a></li>
+<li><a href="{% url 'stock:vente_ca_period' '5' %}">Cette année</a></li>
+<li><a href="{% url 'stock:vente_ca'  %}">Tous</a></li>
+</ul>
+
+
+<br><br><br>
+
+<h2>Cumul des ventes par produit </h2>
+
+<br><br><br>
+
+
+<table class="styled-table" >
+<tr>
+
+    <th>Nom clients</th>
+    <th>C.A </th>
+
+
+</tr>
+{% for ab in ventes %}
+<tr>
+    <td style="text-align:left">{{ab.client__nom_client}}</td>
+    <td style="text-align:left">{{ab.AcSum|floatformat:3|intcomma}}</td>
+
+
+
+</tr>
+{% endfor %}
+</table>
+<br><br><br>
+ {% for ab in max %}
+Le client <strong><u> {{ab.client__nom_client}} </u> </strong> à réalisé le chiffre d'affaire max avec <strong> {{ab.AcSum|floatformat:3|intcomma}}
+     </strong> unités vendus 
+     {% if period == 1%} Aujourd'hui {% endif %}
+     {% if period == 2%} Hier {% endif %}
+     {% if period == 3 %} cette semaine {% endif %}
+     {% if period == 4 %} Ce mois {% endif %}
+     {% if period == 5 %} Cette année {% endif %}
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

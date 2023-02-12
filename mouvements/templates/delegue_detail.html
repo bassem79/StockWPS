@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}<title>{{ delegue.nom_delegue }}</title>{% endblock %}
+
+{% block content %}
+<style>
+    
+</style>
+
+<h2>Le délégué {{ delegue.nom_delegue }} est basé sur <em>{{ delegue.base }} </em></h2>
+
+<h3>Liste de tous les échantillons données:</h3>
+<table class="styled-table" >
+<tr>
+    <th>Date</th>
+    <th>Nom produit</th>
+    <th>Quantité donnée </th>
+</tr>
+{% for ab in total %}
+<tr>
+    <td>{{ab.date}}</td>
+    <td>{{ab.produit.nom_produit}}</td>
+    <td>{{ab.quantite_donne}}</td>
+
+</tr>
+{% endfor %}
+</table>
+
+
+
+
+
+<h2>Synthèse des échantillons mensuels:</h2>
+<table class="styled-table">
+<tr>
+
+    <th>Nom produit</th>
+    <th>Total Quantité donnée ce mois</th>
+</tr>
+{% for ab in echantillon %}
+<tr>
+
+    <td>{{ab.produit__nom_produit}}</td>
+    <td>{{ab.total_qte}}</td>
+
+</tr>
+{% endfor %}
+</table>
+
+<hr>
+<h2>Synthèse des échantillons annuels:</h2>
+<table class="styled-table" >
+<tr>
+
+    <th>Nom produit</th>
+    <th>Total Quantité donnée cette année</th>
+</tr>
+{% for ab in echantillon2 %}
+<tr>
+
+    <td>{{ab.produit__nom_produit}}</td>
+    <td>{{ab.total_qte}}</td>
+    
+</tr>
+{% endfor %}
+
+</table>
+<br><br><br><br>
+<h4><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></h4>
+<h4><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></h4>
+<h4><a href="{% url 'stock:delegue_supprimer' delegue.pk %}">Supprimer un délégué</a></h4>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

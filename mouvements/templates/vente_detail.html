@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}<title>Détails vente </title>{% endblock %}
+
+{% block content %}
+
+
+<h2>vente {{ gg.client__nom_client }} du {{gg.date_vente}} </em></h2>
+<h3>Le client bénéficie d'une remise de {{ gg.client__taux_remise }}</h3>
+
+BL:{{gg.numero_BL}}
+Fact:{{gg.numero_facture}}
+<br><br><br><br><br><br><br>
+<h3>Entête de la vente</h3>
+
+
+<h3>Corps de la vente:</h3>
+<table class="styled-table" >
+<tr>
+
+    <th>Nom produit</th>
+    <th>Quantité vendu </th>
+    <th>Total </th>
+
+</tr>
+{% for ab in ventes %}
+<tr>
+    <td>{{ab.produit__nom_produit}}</td>
+    <td>{{ab.quantite_vendu}}</td>
+    <td>{{ab.price|floatformat:3|intcomma}}</td>
+
+
+</tr>
+</table>
+{% endfor %}
+
+
+<h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

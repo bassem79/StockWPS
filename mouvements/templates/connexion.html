@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+    <h1>Connexion</h1><br><br>
+    <p>Saisir votre nom d'utilisateur et votre mot de passe:</p>
+    <form action="." method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+
+
+
+        <p> <input type="submit" class="btn btn-success" value="Connexion"></p>
+         <input type="hidden" name="next" value="{{ next }}"/>
+
+    </form>
+
+ <p><a href="{% url 'stock:init_password' %}" class="btn btn-link">Initialiser mon mot de passe </a></p>
+  
+{% endblock %}

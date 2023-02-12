@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+
+
+
+<div class="content">
+{% block content %}
+<h1>Tableau de bord</h1>
+<br><br><br><br>
+{% if seuil%}
+<h3 style="color:red">Stock <b>faible</b> </h3>
+
+<table class="styled-table">
+<tr>
+<th>Nom produit</th>
+<th>Quantite en stock</th>
+<th>Seuil</th>
+</tr>  
+{% for tt in seuil %}  
+<tr>
+    <td>{{tt.nom_produit}}</td>
+    <td>{{tt.quantite_stock}}</td>
+    <td>{{tt.seuil}}</td>
+    
+    </tr>
+{% endfor %}    
+</table>    
+{% else %}
+<h3 style="color:green">Quantité en stock de tous les produits est supérieur au seuil défini</h3>
+{% endif %}
+<p><a href="{% url 'stock:produit_list' %}"> Liste des articles </a>
+
+{% endblock %}
+</div>
+
+
+
+<div class="messages">
+{% block msg %}
+
+{% if messages %}
+<ul class="messages">
+{% for message in messages %}
+<li class="{{ message.tags }}">
+{{ message|safe }}
+<a href="#" class="close">✖</a>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
+</div>
+
+

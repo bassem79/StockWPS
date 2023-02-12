@@ -1,0 +1,7 @@
+<ul>
+    {% for post in getp %}
+    <li>
+    <a href="{% url 'stock:vente_detail' post.numero_BL post.numero_facture %}">BL:{{ post.numero_BL }}/Fact={{ post.numero_facture }}</a>
+    </li>
+    {% endfor %}
+    </ul>

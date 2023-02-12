@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}<title>vente max</title>{% endblock %}
+
+{% block content %}
+
+<h2>Ventes max par client:</h2>
+    <br><br><br><br>
+
+<table border>
+    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
+    
+    </table>
+<br><br><br><br>
+
+<h5>Filtrer les ventes par période :</h5>
+
+<ul> 
+<li><a href="{% url 'stock:vente_max_period' '1' %}">Aujourd'hui</a></li>
+<li><a href="{% url 'stock:vente_max_period' '2' %}">Hier</a></li>
+<li><a href="{% url 'stock:vente_max_period' '3' %}">Cette semaine</a></li>
+<li><a href="{% url 'stock:vente_max_period' '4' %}">Ce mois</a></li>
+<li><a href="{% url 'stock:vente_max_period' '5' %}">Cette année</a></li>
+<li><a href="{% url 'stock:vente_max'  %}">Tous</a></li>
+</ul>
+
+
+<br><br><br>
+
+<h2>Cumul des {{nambir}} ventes par produit </h2>
+
+<br><br><br>
+
+
+<table class="styled-table" >
+<tr>
+
+    <th>Nom client</th>
+    <th>Nom produit</th>
+    <th>Quantité vendu </th>
+
+
+</tr>
+{% for ab in ventes %}
+<tr>
+    <td style="text-align:left">{{ab.client__nom_client}}</td>
+    <td style="text-align:left">{{ab.produit__nom_produit}}</td>
+    <td style="text-align:left">{{ab.AcSum}}</td>
+
+
+
+</tr>
+{% endfor %}
+</table>
+<br><br><br>
+
+{% for ab in max %}
+Le client <strong><u> {{ab.client__nom_client}} </u> </strong> à réalisé la vente max avec <strong> {{ab.AcSum}} 
+    
+     </strong> unités vendus 
+    pour le produit <strong>{{ab.produit__nom_produit}}</strong>
+        {% endfor %}
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Ajouter produit</title>{% endblock %}
+{% block content %}
+    <h1>Ajouter Produit</h1>
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+
+
+ <a href="{% url 'stock:produit_list' %}" class="btn btn-warning">Liste des produits</a>
+        <input type="submit" class="btn btn-success" value="Ajouter">
+    </form>
+
+
+
+
+{% endblock %}
+

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %} <title>Liste des Ventes</title> {% endblock %}
+
+
+
+
+{% block content %}
+
+
+
+
+<table border>
+    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
+    
+    </table>
+<br><br><br><br>
+<h1>Liste de(s) {{nambir}} ventes(s) </h1>
+<br><br><br>
+<h5>Filtrer les ventes par période :</h5>
+
+<ul> 
+<li><a href="{% url 'stock:vente_list_period' '1' %}">Aujourd'hui</a></li>
+<li><a href="{% url 'stock:vente_list_period' '2' %}">Hier</a></li>
+<li><a href="{% url 'stock:vente_list_period' '3' %}">Cette semaine</a></li>
+<li><a href="{% url 'stock:vente_list_period' '4' %}">Ce mois</a></li>
+<li><a href="{% url 'stock:vente_list'  %}">Tous</a></li>
+</ul>
+
+<h5 style="background:pink;">Filtrer les ventes par numéro BL/Facture :</h5>
+
+<div style="background:pink;">
+    <form action="{% url 'stock:vente_bl_facture' %}" method="post">
+         {% csrf_token %}
+        N° BL  <select name="bl">
+            <option value= "None">--Choisir BL--</option>
+{% for ab in posts%}
+
+{% ifchanged %}<option  value="{{ab.numero_BL}}">{{ab.numero_BL}}</option>{% endifchanged %}
+{% endfor %}
+</select>    
+      N° Facture <select name="fact">
+        <option value="None">--Choisir Facture--</option>
+    {% for ab in posts%}
+    {% ifchanged %}<option  value="{{ab.numero_facture}}">{{ab.numero_facture}}</option>{% endifchanged %}
+    {% endfor %}
+    </select>    
+<input type="submit" value="filtrer">
+</form></div>
+<br><br><br>
+<div style="  border: 2px outset rgb(255, 255, 248);
+background-color: rgb(226, 236, 236);
+text-align: center;">
+
+{{cl}}
+<div class="post-author">
+<table class="styled-table">
+<tr>
+
+    <th>Date vente</th>
+    <th>Nom du client</th>
+    <th>Numéro BL</th>
+    <th>Numéro facture</th>
+    <th>Moyen de payement</th>
+    <th>payé ?</th>
+    <th>Gratuité ?</th>
+    <th>Nom du produit</th>
+    <th>Quantité vendu</th>
+    <th>Total</th>
+</tr>  
+{% for ab in posts %}
+
+<tr>
+<td>{{ab.date_vente}}</td>
+<td>{{ab.client.nom_client}}</td>
+<td>{{ab.numero_BL}}</td>
+<td>{{ab.numero_facture}}</td>
+<td>{{ab.moyen_payement}}</td>
+<td>{{ab.paye}}</td>
+<td>{{ab.gratuite}}</td>
+<td>{{ab.produit.nom_produit}}</td>
+<td>{{ab.quantite_vendu}}</td>
+<td>{{ab.price|floatformat:3|intcomma }}</td>
+</tr>    
+{% endfor %} 
+
+</table>
+</div>
+
+<hr>
+
+{% include "pagination.html" with page=posts %}
+</div>
+<h5> Le montant total des ventes est de  {{globalite|floatformat:3|intcomma }} DT</h5>
+{% endblock %}

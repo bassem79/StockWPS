@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}<title>Historique vente par BL/Fact</title>{% endblock %}
+
+{% block content %}
+<table border>
+    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
+    
+    </table>
+
+<h2>vente {{cl.nom_client}} (type {{cl.type_client}})   </h2>
+<h3>Détail(s) de {{nambir}} vente(s)</h3>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+{% endif %}
+
+
+<br><br><br>
+<h3>Détails vente(s) </h3>
+<table class="styled-table">
+<tr>
+    <th>Date vente </th>
+<th>Numéro BL</th>
+<th>Numéro facture</th>
+<th>Moyen de paiement</th>
+<th>Payé</th>
+<th>Gratuit</th>
+<th>Nom produit</th>
+<th>Quantité</th>
+<th>Total</th>
+</tr>   
+{% for histo in selected_bl %}
+<tr>
+    <td>{{histo.date_vente}}</td> 
+ <td>{{ histo.numero_BL }}</td>
+ <td>{{ histo.numero_facture }}</td>
+ <td>{{ histo.moyen_payement }}</td>
+ <td>{{ histo.paye }}</td>
+ <td>{{ histo.gratuit }}</td>
+ <td>{{ histo.produit.nom_produit }}</td>
+ <td>{{ histo.quantite_vendu }}</td>
+ <td>{{ histo.price|floatformat:3|intcomma }}</td>
+</tr>   
+{% endfor %}
+</table>
+
+<h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
+<br><br><br>
+<hr>
+<h3>Détails factures non payés</h3>
+<table class="styled-table">
+    <tr>
+    <th>Date vente </th>
+    <th>Numéro BL</th>
+    <th>Numéro facture</th>
+    <th>Moyen de paiement</th>
+    <th>Payé</th>
+    <th>Gratuit</th>
+    <th>Nom produit</th>
+    <th>Quantité</th>
+    <th>Total</th>
+    </tr>   
+    {% for histo in historique2 %}
+    <tr>
+     <td>{{histo.date_vente}}</td>   
+     <td>{{ histo.numero_BL }}</td>
+     <td>{{ histo.numero_facture }}</td>
+     <td>{{ histo.moyen_payement }}</td>
+     <td>{{ histo.paye }}</td>
+     <td>{{ histo.gratuit }}</td>
+     <td>{{ histo.produit.nom_produit }}</td>
+     <td>{{ histo.quantite_vendu }}</td>
+     <td>{{ histo.price2|floatformat:3|intcomma }}</td>
+    </tr>  
+    {% endfor %}
+    </table>
+    
+    <h3>Total de la vente = {{globalite2|floatformat:3|intcomma }}</h3>
+
+
+    <br><br><br>
+    
+    <hr>
+    <h3>Détails gratuité</h3>
+    <table class="styled-table">
+        <tr>
+        <th>Date vente </th>
+        <th>Numéro BL</th>
+        <th>Numéro facture</th>
+        <th>Moyen de paiement</th>
+        <th>Payé</th>
+        <th>Gratuit</th>
+        <th>Nom produit</th>
+        <th>Quantité</th>
+
+        </tr>   
+        {% for histo in gratuite %}
+        <tr>
+         <td>{{histo.date_vente}}</td>   
+         <td>{{ histo.numero_BL }}</td>
+         <td>{{ histo.numero_facture }}</td>
+         <td>{{ histo.moyen_payement }}</td>
+         <td>{{ histo.paye }}</td>
+         <td>{{ histo.gratuit }}</td>
+         <td>{{ histo.produit.nom_produit }}</td>
+         <td>{{ histo.quantite_vendu }}</td>
+
+        </tr>   
+        {% endfor %}
+        </table>    
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

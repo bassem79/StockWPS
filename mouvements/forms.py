@@ -20,10 +20,17 @@ class produitAjoutForm(forms.ModelForm):
         model = Produit
         fields = '__all__'
 
+class clientAjoutForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = '__all__'
 
 
 
-
+class remiseAjoutForm(forms.ModelForm):
+    class Meta:
+        model = RemiseClient
+        fields = '__all__'
 
 class Entetevente(forms.ModelForm):
         class Meta:

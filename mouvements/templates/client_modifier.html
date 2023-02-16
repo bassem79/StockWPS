@@ -2,13 +2,10 @@
 {% load static %}
 
 {% block title %} 
-<title>{{ prd.nom_produit }}</title>
+<title>{{ clt.nom_client }}</title>
  {% endblock %}
 
 {% block content %}
-
-<img src="{% if prd.image %}{{ prd.image.url }}{% else %}
-{% static "img/benestar.jpg" %}{% endif %}">
 
 <form method="post" enctype='multipart/form-data' > 
     {% csrf_token %} 
@@ -19,10 +16,13 @@
 <br>
 <table class="styled-table">
     <tr>
-<td><a href="{% url 'stock:produit_list' %}">Retour vers la Liste des produits</a></td>
-<td><a href="{% url 'stock:produit_ajouter' %}">Ajouter un produit</a></td>
+<td><a href="{% url 'stock:remises_list' clt.nom_client %}">Gestion remises</a></td>      
+<td><a href="{% url 'stock:client_list' %}">Liste clients</a></td>
+<td><a href="{% url 'stock:client_ajouter' %}">ajouter clients</a></td>
     </tr>        
-</table>  
+</table>    
+
+
 {% endblock %}
 
 

@@ -58,7 +58,7 @@
 }
 
 td {text-align:center;}
-
+table.bassem{margin:1%%}
     </style>
 </head>
 
@@ -74,7 +74,7 @@ td {text-align:center;}
                 <!-- Logo Area Start -->
                 <div class="col-12">
                     <div class="logo_area text-center">
-                        <a href="{% url 'stock:delegue_list' %}" class="yummy-logo">Gestion du stock</a>
+                        <a href="{% url 'stock:dashboard' %}" class="yummy-logo">Gestion du stock</a>
                     </div>
                 </div>
             </div>
@@ -93,87 +93,7 @@ td {text-align:center;}
         </div>
     </header>
     <!-- ****** Header Area End ****** -->
-<!-- ****** Instagram Area Start ****** -->
-    <div class="instargram_area owl-carousel section_padding_100_0 clearfix" id="portfolio">
 
-        <!-- Instagram Item images  -->
-        <div class="instagram_gallery_item">
-            <!-- Instagram Thumb -->
-            <img src="{% static 'img/instagram-img/1.jpg' %}" alt="">
-            <!-- Hover -->
-            <div class="hover_overlay">
-                <div class="yummy-table">
-                    <div class="yummy-table-cell">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Instagram Item -->
-        <div class="instagram_gallery_item">
-            <!-- Instagram Thumb -->
-            <img src="{% static 'img/instagram-img/2.jpg' %}" alt="">
-            <!-- Hover -->
-            <div class="hover_overlay">
-                <div class="yummy-table">
-                    <div class="yummy-table-cell">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Instagram Item -->
-        <div class="instagram_gallery_item">
-            <!-- Instagram Thumb -->
-            <img src="{% static 'img/instagram-img/3.jpg' %}" alt="">
-            <!-- Hover -->
-            <div class="hover_overlay">
-                <div class="yummy-table">
-                    <div class="yummy-table-cell">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Instagram Item -->
-        <div class="instagram_gallery_item">
-            <!-- Instagram Thumb -->
-            <img src="{% static 'img/instagram-img/4.jpg' %}" alt="">
-            <!-- Hover -->
-            <div class="hover_overlay">
-                <div class="yummy-table">
-                    <div class="yummy-table-cell">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Instagram Item -->
-        <div class="instagram_gallery_item">
-            <!-- Instagram Thumb -->
-            <img src="{% static 'img/instagram-img/5.jpg' %}" alt="">
-            <!-- Hover -->
-            <div class="hover_overlay">
-                <div class="yummy-table">
-                    <div class="yummy-table-cell">
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
-    </div>
-    <!-- ****** Our Creative Portfolio Area End ****** -->
 
 
     <!-- ****** Breadcumb Area End ****** -->
@@ -255,6 +175,7 @@ td {text-align:center;}
                             <div class="single-populer-post d-flex">
                                  
                                 <div class="post-content">
+                                    <a href=" {% url 'stock:vente_list' %}"> <h6>Liste des ventes</h6></a>
                                     <a href=" {% url 'stock:vente_ajouter' %}"> <h6>Ajouter vente</h6></a>
                                     <a href=" {% url 'stock:produit_ajouter' %}"> <h6>Ajouter produit</h6></a>
                                     <a href=" {% url 'stock:vente_payement' %}"><h6>Payement vente</h6></a>
@@ -277,8 +198,8 @@ td {text-align:center;}
                             <P>Aujourd'hui {% total_ventes %} ventes</p>
                             <div class="single-populer-post d-flex">
                                 <div class="post-content">
-                                    <h7>3 dernières ventes payés: <br></h7>
-                                   {%  get_ventes_payes   %}
+                                    <h7>Ventes aujourd'hui: <br></h7>
+                                   {%  get_ventes_today   %}
                                    
                                 </div>
                             </div>
@@ -289,8 +210,8 @@ td {text-align:center;}
 
                                 <div class="single-populer-post d-flex">
                                     <div class="post-content">
-                                        <h7>3 dernières ventes non payés: <br></h7>
-                                       {%  get_ventes_nonpayes   %}
+                                        <h7>Ventes d'hier: <br></h7>
+                                       {%  get_ventes_hier   %}
                                        
                                     </div>
                                 </div>

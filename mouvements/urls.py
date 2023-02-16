@@ -13,6 +13,8 @@ path('<str:zone>/delegue/', views.delegue_list, name='delegue_list_zone'),
 path('delegue/<int:id>/', views.delegue_detail, name='delegue_detail'),
 path('delegue/ajouter/', views.delegue_ajouter.as_view(), name='delegue_ajouter'),
 path('delegue/supprimer/<pk>/', views.delegue_supprimer.as_view(),name='delegue_supprimer'),
+path('delegue/<pk>/update', views.delegueUpdateView.as_view(),name='delegue_modifier'), 
+
 path('vente/ajouter/', views.Vente_ajouter,name='vente_ajouter'),
 path('visite/', views.visite_ajouter,name='visite_ajouter'),
 
@@ -35,6 +37,21 @@ path('produit/', views.produit_list, name='produit_list'),
 path('produit/ajouter/', views.produit_ajouter.as_view(), name='produit_ajouter'),
 path('produit/<int:id>/', views.produit_detail, name='produit_detail'),
 path('produit/<pk>/update', views.produitUpdateView.as_view(),name='produit_modifier'), 
+path('produit/supprimer/<pk>/', views.produit_supprimer.as_view(),name='produit_supprimer'),
+
+
+
+path('client/ajouter/', views.client_ajouter.as_view(), name='client_ajouter'),
+path('client/', views.client_list, name='client_list'),
+path('client/<pk>/update', views.clientUpdateView.as_view(),name='client_modifier'), 
+path('client/<pk>/delete', views.clientDeleteView.as_view(),name='client_supprimer'), 
+
+
+path('remise/list/<str:clt>',views.remises_list,name='remises_list'),
+path('remise/ajouter/', views.remise_ajouter.as_view(), name='remise_ajouter'),
+path('remise/<pk>/update', views.remiseUpdateView.as_view(),name='remise_modifier'), 
+path('remise/<pk>/delete', views.remiseDeleteView.as_view(),name='remise_supprimer'), 
+
 
 
 path('client/<int:id>/', views.venteClient, name='vente_client_historique'),
@@ -44,4 +61,6 @@ path('client/<int:id>/<str:period>', views.venteClient, name='vente_client_histo
 
 path('export/xls/ventes', views.export_ventes_xls, name='export_ventes_xls'),
 path('export/xls/produits', views.export_produits_xls, name='export_produits_xls'),
+path('export/xls/clients', views.export_clients_xls, name='export_clients_xls'),
+path('export/xls/delegues', views.export_delegues_xls, name='export_delegues_xls'),
 ]

@@ -65,10 +65,16 @@
 {% endfor %}
 
 </table>
-<br><br><br><br>
-<h4><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></h4>
-<h4><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></h4>
-<h4><a href="{% url 'stock:delegue_supprimer' delegue.pk %}">Supprimer un délégué</a></h4>
+<br>
+
+
+<table class="styled-table">
+    <tr>
+<td><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></td>
+<td><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></td>
+<td><a href="{% url 'stock:delegue_supprimer' delegue.pk %}">Supprimer un délégué</a></td>
+    </tr>        
+</table>  
 {% endblock %}
 
 

@@ -14,16 +14,28 @@
        <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="yummyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Produit</a>
         <div class="dropdown-menu" aria-labelledby="yummyDropdown">
-            <a class="dropdown-item" href="{% url 'stock:produit_list' %}">Liste des produits</a>
+            <a class="dropdown-item" href="{% url 'stock:produit_list' %}">Liste des produits(Modifier/Supprimer)</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'stock:produit_ajouter' %}">Ajouter un produit</a>
         </div>
        </li>
 
        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="yummyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Client</a>
+        <div class="dropdown-menu" aria-labelledby="yummyDropdown">
+            <a class="dropdown-item" href="{% url 'stock:client_list' %}">Liste des clients(Modifier/Supprimer)</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'stock:client_ajouter' %}">Ajouter un client</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'stock:remise_ajouter' %}">Ajouter une remise</a>
+
+        </div>
+       </li>
+
+       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="yummyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Délegué</a>
         <div class="dropdown-menu" aria-labelledby="yummyDropdown">
-            <a class="dropdown-item" href="{% url 'stock:delegue_list' %}">Liste des delegue</a>
+            <a class="dropdown-item" href="{% url 'stock:delegue_list' %}">Liste des delegue(Modifier/Supprimer)</a>
             <a class="dropdown-item" href="{% url 'stock:delegue_ajouter' %}">Ajouter delegue</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'stock:visite_ajouter' %}">Fourniture échantillon</a>
@@ -46,6 +58,8 @@
         <div class="dropdown-menu" aria-labelledby="yummyDropdown">
             <a class="dropdown-item" href="{% url 'stock:export_produits_xls' %}">Produits</a>
             <a class="dropdown-item" href="{% url 'stock:export_ventes_xls' %}">Ventes</a>
+            <a class="dropdown-item" href="{% url 'stock:export_clients_xls' %}">Clients</a>
+            <a class="dropdown-item" href="{% url 'stock:export_delegues_xls' %}">Délegués</a>
         </div>
        </li>
 
@@ -68,9 +82,7 @@
        {% endif %}
 
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="">Extra bassem</a>
-                                    </li>
+
 
 
 

@@ -7,34 +7,38 @@
 
 {% block content %}
 
+<h3>Liste de(s) {{nambir}} produits(s) </h3>
 
 
 
-<table border>
-    <tr></tr><td><a href="{% url 'stock:produit_list' %}" class="btn btn-info">Liste des produits</a></td>
-    <td><a href="{% url 'stock:produit_ajouter' %}" class="btn btn-info">Ajouter un produit</a></td></tr>
-    
-    </table>
-<br><br><br><br>
-<h1>Liste de(s) {{nambir}} produits(s) </h1>
-<br><br><br>
-
-<div style="  border: 2px outset rgb(255, 255, 248);
-background-color: rgb(226, 236, 236);
-text-align: center;">
-{% for del in posts %}
 
 <div class="post-author">
-<h5>le produit <u>{{del.nom_produit}} </u> en stock {{del.quantite_stock}}</h5>
-
-</div>
-<div>
- <a href="{% url 'stock:produit_modifier' del.id  %}" class="btn btn-success">Voir/ modifier  produit</a>
-<br/><br/><br/>
-</div>
-<hr>
+<table class="styled-table">
+<tr>
+<th>Nom produit</th>
+<th>Pix</th>    
+<th>Quantité stock</th>
+<th>Seuil</th>
+<th>Modifier ?</th>
+<th>Supprimer ?</th>
+</tr> 
+{% for ab in posts %}   
+<tr>
+<td>{{ab.nom_produit}}</td>
+<td>{{ab.prix}}</td>
+<td>{{ab.quantite_stock}}</td>
+<td>{{ab.seuil}}</td>
+<td><a href="{% url 'stock:produit_modifier' ab.id%}">Modifier</a></td>
+<td><a href="{% url 'stock:produit_supprimer' ab.id%}">Supprimer</a></td>
+</tr>
 {% endfor %}
+</table>
+
+
 {% include "pagination.html" with page=posts %}
+
+
+
 </div>
 
 {% endblock %}

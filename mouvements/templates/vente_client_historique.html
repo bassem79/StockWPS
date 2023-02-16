@@ -4,24 +4,23 @@
 {% block title %}<title>Histirique vente par client</title>{% endblock %}
 
 {% block content %}
-<style>
-    
-</style>
 
 <h2>vente {{ cl.nom_client }} (type {{cl.type_client}})</h2>
 <h3>Détail(s) de {{nambir}} vente(s)</h3>
 
 <h5>Filtrer les ventes :</h5>
 
-<ul> 
-<li><a href="{% url 'stock:vente_client_historique_period' cl.pk '1' %}">Aujourd'hui</a></li>
-<li><a href="{% url 'stock:vente_client_historique_period' cl.pk '2' %}">Hier</a></li>
-<li><a href="{% url 'stock:vente_client_historique_period' cl.pk '3' %}">Cette semaine</a></li>
-<li><a href="{% url 'stock:vente_client_historique_period' cl.pk '4' %}">Ce mois</a></li>
-<li><a href="{% url 'stock:vente_client_historique' cl.pk   %}">Tous</a></li>
-</ul>
+<table>
+    <tr>
+    <td width="5%"><a href="{% url 'stock:vente_client_historique_period' cl.pk '1' %}">Aujourd'hui</a></td>
+    <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '2' %}">Hier</a></td>
+    <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '3' %}">Cette semaine</a></td>
+    <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '4' %}">Ce mois</a></td>
+    <td><a href="{% url 'stock:vente_client_historique' cl.pk  %}">Tous</a></td></tr>
+</table>
+    <br>
 
-<br><br><br>
+
 <h3>Détails vente(s)</h3>
 <table class="styled-table">
 <tr>
@@ -45,12 +44,12 @@
  <td>{{ histo.gratuit }}</td>
  <td>{{ histo.produit.nom_produit }}</td>
  <td>{{ histo.quantite_vendu }}</td>
- <td>{{ histo.price|floatformat:3|intcomma }}</td>
+ <td>{{ histo.prix|floatformat:3|intcomma }}</td>
 </tr>   
 {% endfor %}
 </table>
 
-<h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
+<h3>Total de la vente = {{somme|floatformat:3|intcomma}}</h3>
 <br><br><br>
 <hr>
 <h3>Détails factures non payés</h3>
@@ -76,12 +75,12 @@
      <td>{{ histo.gratuit }}</td>
      <td>{{ histo.produit.nom_produit }}</td>
      <td>{{ histo.quantite_vendu }}</td>
-     <td>{{ histo.price|floatformat:3|intcomma }}</td>
+     <td>{{ histo.prix|floatformat:3|intcomma }}</td>
     </tr>  
     {% endfor %}
     </table>
     
-    <h3>Total de la vente = {{globalite2|floatformat:3|intcomma }}</h3>
+    <h3>Total de la vente = {{sommenp|floatformat:3|intcomma }}</h3>
 
 
     <br><br><br>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Client, Produit,Delegue,VisiteMedicale,Vente,Alimenter_stock
+from .models import Client, Produit,Delegue,VisiteMedicale,Vente,Alimenter_stock,RemiseClient
 
 
 
@@ -39,7 +39,7 @@ class VisiteMedicaleAdmin(admin.ModelAdmin):
 @admin.register(Vente)
 class VenteAdmin(admin.ModelAdmin):
     list_display = ['client', 'produit','date_vente','numero_BL','numero_facture',
-    'quantite_vendu','moyen_payement','paye','gratuit']
+    'quantite_vendu','moyen_payement','paye','gratuit','montant_remise','prix']
     list_filter = ['client__nom_client', 'produit__nom_produit','date_vente', 'quantite_vendu','moyen_payement','paye','gratuit']
     search_fields = ['client__nom_client', 'produit__nom_produit','date_vente', 'numero_BL','numero_facture','quantite_vendu','moyen_payement','paye','gratuit']
     ordering = ['date_vente','produit']
@@ -51,4 +51,11 @@ class Alimenter_stockAdmin(admin.ModelAdmin):
     list_filter = ['produit','date_entree','quantite_entree']
     search_fields = ['produit','date_entree','quantite_entree']
     ordering = ['date_entree','produit']
+
+@admin.register(RemiseClient)
+class RemiseClientAdmin(admin.ModelAdmin):
+    list_display = ['client','taux_remise','date_remise']
+    list_filter = ['client','taux_remise','date_remise']
+    search_fields = ['client','taux_remise','date_remise']
+    ordering = ['date_remise']
 

@@ -13,17 +13,19 @@
 
 <h5>Filtrer les ventes par période :</h5>
 
-<ul> 
-<li><a href="{% url 'stock:vente_ca_period' '1' %}">Aujourd'hui</a></li>
-<li><a href="{% url 'stock:vente_ca_period' '2' %}">Hier</a></li>
-<li><a href="{% url 'stock:vente_ca_period' '3' %}">Cette semaine</a></li>
-<li><a href="{% url 'stock:vente_ca_period' '4' %}">Ce mois</a></li>
-<li><a href="{% url 'stock:vente_ca_period' '5' %}">Cette année</a></li>
-<li><a href="{% url 'stock:vente_ca'  %}">Tous</a></li>
-</ul>
+<table>
+    <tr>
+    <td width="5%"><a href="{% url 'stock:vente_ca_period' '1' %}">Aujourd'hui</a></td>
+    <td><a href="{% url 'stock:vente_ca_period' '2' %}">Hier</a></td>
+    <td><a href="{% url 'stock:vente_ca_period' '3' %}">Cette semaine</a></td>
+    <td><a href="{% url 'stock:vente_ca_period' '4' %}">Ce mois</a></td>
+    <td><a href="{% url 'stock:vente_ca_period' '5'  %}">Cette année</a></td>
+    <td><a href="{% url  'stock:vente_ca'   %}">Tous</a></td></tr>
+</table>
+    <br>
 
 
-<br><br><br>
+
 
 <h2>Cumul des ventes par produit </h2>
 
@@ -51,7 +53,7 @@
 <br><br><br>
  {% for ab in max %}
 Le client <strong><u> {{ab.client__nom_client}} </u> </strong> à réalisé le chiffre d'affaire max avec <strong> {{ab.AcSum|floatformat:3|intcomma}}
-     </strong> unités vendus 
+     </strong> TND de C.A 
      {% if period == 1%} Aujourd'hui {% endif %}
      {% if period == 2%} Hier {% endif %}
      {% if period == 3 %} cette semaine {% endif %}

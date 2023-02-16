@@ -4,17 +4,16 @@
 
 {% block content %}
 
-
-<h2>vente {{ gg.client__nom_client }} du {{gg.date_vente}} </em></h2>
-<h3>Le client bénéficie d'une remise de {{ gg.client__taux_remise }}</h3>
-
-BL:{{gg.numero_BL}}
-Fact:{{gg.numero_facture}}
-<br><br><br><br><br><br><br>
-<h3>Entête de la vente</h3>
+{% with ventes|first as gg %}
+<p>vente <b>{{ gg.client }} </b> du {{gg.date_vente}} </p>
+<p>Le client bénéficie d'une remise de {{ gg.client.taux_remise }}</p>
+<p>BL: {{gg.numero_BL}}</p>
+<p>Fact: {{gg.numero_facture}}</p>
+{% endwith %}
 
 
-<h3>Corps de la vente:</h3>
+
+<h6>Corps de la vente:</h6>
 <table class="styled-table" >
 <tr>
 
@@ -25,17 +24,17 @@ Fact:{{gg.numero_facture}}
 </tr>
 {% for ab in ventes %}
 <tr>
-    <td>{{ab.produit__nom_produit}}</td>
+    <td>{{ab.produit.nom_produit}}</td>
     <td>{{ab.quantite_vendu}}</td>
-    <td>{{ab.price|floatformat:3|intcomma}}</td>
+    <td>{{ab.prix|floatformat:3|intcomma}}</td>
 
 
 </tr>
-</table>
+
 {% endfor %}
+</table>
 
-
-<h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
+<h5>Total de la vente = {{somme|floatformat:3|intcomma}} TND</h5>
 
 
 

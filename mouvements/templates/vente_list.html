@@ -10,24 +10,19 @@
 
 
 
-<table border>
-    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
-    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
-    
-    </table>
-<br><br><br><br>
-<h1>Liste de(s) {{nambir}} ventes(s) </h1>
-<br><br><br>
-<h5>Filtrer les ventes par période :</h5>
+<h4>Liste de(s) {{nambir}} ventes(s) </h4>
 
-<ul> 
-<li><a href="{% url 'stock:vente_list_period' '1' %}">Aujourd'hui</a></li>
-<li><a href="{% url 'stock:vente_list_period' '2' %}">Hier</a></li>
-<li><a href="{% url 'stock:vente_list_period' '3' %}">Cette semaine</a></li>
-<li><a href="{% url 'stock:vente_list_period' '4' %}">Ce mois</a></li>
-<li><a href="{% url 'stock:vente_list'  %}">Tous</a></li>
-</ul>
+Filtrer les ventes par période :
 
+ <table>
+<tr>
+<td width="5%"><a href="{% url 'stock:vente_list_period' '1' %}">Aujourd'hui</a></td>
+<td><a href="{% url 'stock:vente_list_period' '2' %}">Hier</a></td>
+<td><a href="{% url 'stock:vente_list_period' '3' %}">Cette semaine</a></td>
+<td><a href="{% url 'stock:vente_list_period' '4' %}">Ce mois</a></td>
+<td><a href="{% url 'stock:vente_list'  %}">Tous</a></td>
+ </table>
+<br>
 <h5 style="background:pink;">Filtrer les ventes par numéro BL/Facture :</h5>
 
 <div style="background:pink;">
@@ -48,12 +43,10 @@
     </select>    
 <input type="submit" value="filtrer">
 </form></div>
-<br><br><br>
-<div style="  border: 2px outset rgb(255, 255, 248);
-background-color: rgb(226, 236, 236);
-text-align: center;">
+<br>
 
-{{cl}}
+
+
 <div class="post-author">
 <table class="styled-table">
 <tr>
@@ -63,10 +56,12 @@ text-align: center;">
     <th>Numéro BL</th>
     <th>Numéro facture</th>
     <th>Moyen de payement</th>
-    <th>payé ?</th>
-    <th>Gratuité ?</th>
+    <th>Paye ?</th>
+
     <th>Nom du produit</th>
     <th>Quantité vendu</th>
+
+    <th>Montant remise</th>
     <th>Total</th>
 </tr>  
 {% for ab in posts %}
@@ -78,19 +73,98 @@ text-align: center;">
 <td>{{ab.numero_facture}}</td>
 <td>{{ab.moyen_payement}}</td>
 <td>{{ab.paye}}</td>
-<td>{{ab.gratuite}}</td>
+
 <td>{{ab.produit.nom_produit}}</td>
 <td>{{ab.quantite_vendu}}</td>
-<td>{{ab.price|floatformat:3|intcomma }}</td>
+
+<td>{{ab.montant_remise|floatformat:3|intcomma }}</td>
+<td>{{ab.prix|floatformat:3|intcomma }}</td>
 </tr>    
 {% endfor %} 
 
 </table>
-</div>
-
-<hr>
-
 {% include "pagination.html" with page=posts %}
+<h5>Le montant total des ventes est de  {{somme|floatformat:3|intcomma }} DT</h5>
+
 </div>
-<h5> Le montant total des ventes est de  {{globalite|floatformat:3|intcomma }} DT</h5>
+<h6>Ventes non payés:</h6>
+<div class="post-author" >
+    <table class="styled-table">
+    <tr>
+    
+        <th>Date vente</th>
+        <th>Nom du client</th>
+        <th>Numéro BL</th>
+        <th>Numéro facture</th>
+        <th>Moyen de payement</th>
+
+
+        <th>Nom du produit</th>
+        <th>Quantité vendu</th>
+
+        <th>Montant remise</th>
+        <th>Total</th>
+    </tr>  
+    {% for ab in ventesnp %}
+    
+    <tr>
+    <td>{{ab.date_vente}}</td>
+    <td>{{ab.client.nom_client}}</td>
+    <td>{{ab.numero_BL}}</td>
+    <td>{{ab.numero_facture}}</td>
+    <td>{{ab.moyen_payement}}</td>
+ 
+
+    <td>{{ab.produit.nom_produit}}</td>
+    <td>{{ab.quantite_vendu}}</td>
+
+    <td>{{ab.montant_remise|floatformat:3|intcomma }}</td>
+    <td>{{ab.prix|floatformat:3|intcomma }}</td>
+    </tr>    
+    {% endfor %} 
+    
+    </table>
+    </div>
+    <h5> Le montant total des ventes non encore payés est de  {{sommenp|floatformat:3|intcomma }} DT </h5>
+
+    <h6>Gratuités:</h6>
+    <div class="post-author">
+        <table class="styled-table">
+        <tr>
+        
+            <th>Date vente</th>
+            <th>Nom du client</th>
+            <th>Numéro BL</th>
+            <th>Numéro facture</th>
+
+        
+            <th>Nom du produit</th>
+            <th>Quantité vendu</th>
+        
+
+        </tr>  
+        {% for ab in postss %}
+        
+        <tr>
+        <td>{{ab.date_vente}}</td>
+        <td>{{ab.client.nom_client}}</td>
+        <td>{{ab.numero_BL}}</td>
+        <td>{{ab.numero_facture}}</td>
+
+        
+        <td>{{ab.produit.nom_produit}}</td>
+        <td>{{ab.quantite_vendu}}</td>
+
+        </tr>    
+        {% endfor %} 
+        
+        </table>
+    </div>
+
+<br><table border>
+    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
+    
+    </table>
+   
 {% endblock %}

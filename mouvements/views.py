@@ -30,6 +30,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 import xlwt
 
+
 def dashboard(request):
     seuil = Produit.objects.filter(quantite_stock__lte = F('seuil'))
     return render(request, 'dashboard.html', locals())
@@ -68,6 +69,7 @@ def user_login(request):
 @login_required
 def deconnexion(request):
     logout(request)
+    messages.success(request, f'Vous avez été deconnecté')
     return redirect('stock:connexion')
 
 @login_required
@@ -149,6 +151,7 @@ class delegue_ajouter(CreateView):
     form_class = delegueAjoutForm
     template_name = "delegue_ajouter.html"
     def get_success_url(self):
+        messages.success(self.request,f'Délégué ajouté avec succés')
         return (reverse('stock:delegue_list'))
 
 @method_decorator(login_required, name='dispatch')
@@ -157,7 +160,17 @@ class delegue_supprimer(DeleteView):
     # success_url ="stock:delegue_list"
     template_name = "delegue_supprimer.html"
     def get_success_url(self):
+        messages.success(self.request,f'Délégué supprimé avec succés')
         return (reverse('stock:delegue_list'))
+
+@method_decorator(login_required, name='dispatch')
+class produit_supprimer(DeleteView):
+    model = Produit
+    
+    template_name = "produit_supprimer.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Produit supprimé avec succés')
+        return (reverse('stock:produit_list'))
 
 @login_required
 def visite_ajouter(request):
@@ -171,7 +184,8 @@ def visite_ajouter(request):
             if cd["quantite_donne"] > qq.quantite_stock:
                 messages.error(request, "Erreur. Stock insuffisant !!")
             else:
-                form.save()    
+                form.save()   
+                messages.success(request, f'Opération effectué avec succés')
                 return redirect(reverse("stock:delegue_list"))
         
     else:
@@ -180,32 +194,12 @@ def visite_ajouter(request):
     return render(request, 'Visite_ajouter.html', locals())           
 
 
-
-# def Vente_ajouter(request):
-#     # client = Client.objects.all()
-    
-#     produit = Produit.objects.all()
-#     vente_precedente = Vente.objects.all()
-    
-#     # link_data = [{'prd': l}
-#     #     for l in produit]
-#     if request.method == "POST":
-#         form = Entetevente(request.POST)
-#         LinkFormSet= formset_factory(VenteFormSet, formset=BaseLinkFormSet, extra=1)
-#         if LinkFormSet.is_valid() and form.is_valid:
-#              messages.error(request, 'imchi wija asba')
-#     else:
-#         form = Entetevente()
-      
-#         LinkFormSet = formset_factory(VenteFormSet, formset=BaseLinkFormSet, extra=1)
-    
-#     context = {
-#         'form': form,
-#         'LinkFormSet': LinkFormSet,
-#         # 'choice_links':link_data
-#     }
-#     return render(request, 'vente_ajouter.html', context)
-
+def remises_list(request,clt):
+    clt =get_object_or_404(Client,nom_client=clt)
+    sel = clt.remiseclient.all()
+    return render(request, 'remise_list.html', {'clt':clt,
+                                                'sel':sel,                                        
+                                                   })
 
 @login_required
 def Vente_ajouter(request):
@@ -245,10 +239,16 @@ def Vente_ajouter(request):
                 # tmp = Vente.objects.filter(client__nom_client = client,numero_BL=numero_BL, numero_facture=numero_facture)
                 # for ab in tmp:
                 #     tab.append({'nom':produit,'qte':ab.quantite_vendu})
+                if client.taux_remise != 0:
+                    prix = quantite_vendu * (1-client.taux_remise) * tmp.prix
+                    montant_remise = quantite_vendu * tmp.prix - prix
+                else:
+                    prix = quantite_vendu  * tmp.prix
+                    montant_remise = 0
 
                 new_links.append(Vente(client = client,numero_BL=numero_BL, numero_facture=numero_facture,  \
                 moyen_payement=moyen_payement,paye=paye,gratuit=gratuit,produit=produit, \
-                quantite_vendu= quantite_vendu ))
+                quantite_vendu= quantite_vendu,prix=prix,montant_remise=montant_remise ))
                 
     
             try:
@@ -274,7 +274,7 @@ def Vente_ajouter(request):
                     
                     #oldvente = Vente.objects.filter(client = client,numero_BL=numero_BL,numero_facture=numero_facture).delete()
                     #oldvente.bulk_create(new_links)
-                    messages.success(request, f'Votre vente à été correctement saisie/mis à jour.')
+                    messages.success(request, f'Votre vente à été correctement saisie.')
                     return redirect(reverse('stock:vente_list'))
 
             except IntegrityError:  # If the transaction failed
@@ -325,18 +325,26 @@ def vente_list(request,period = None):
         elif period == '4' :
             ventes = ventes.filter(date_vente__month = month,date_vente__year= year)   
      
-    
+    postss = ventes.filter(gratuit=True)
     # ventes = ventes.annotate(total_produit=( Cast('quantite_vendu',output_field=IntegerField()) * Cast('client__taux_remise',output_field=DecimalField())  )) 
     ventes= ventes.exclude(gratuit=True ).order_by("numero_BL","numero_facture")
-    ventes = ventes.annotate( price=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
+    
+    # ventes = ventes.annotate( price=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
+    somme = ventes.aggregate(Sum('prix'))['prix__sum'] or 0.000
+
     # ventes = ventes.annotate(
     # total=ExpressionWrapper(
     #     F('quantite_vendu') * F('client__taux_remise') * F('produit__prix'), output_field=DecimalField()))
+    # ventes = ventes.annotate( price = Case( \
+    #     When (produit__prix__isnull =  True , then= (F('quantite_vendu')  * F('produit__prix'))),
+    #     When (produit__prix__gt =  0, then= (F('quantite_vendu') * F('client__taux_remise') * F('produit__prix'))),
+    #     # default= (F('quantite_vendu')  * F('produit__prix')),
+        
+    #     output_field=DecimalField()))
 
-   
-    globalite = 0 
-    for t in ventes:
-        globalite = globalite + t.price
+    ventesnp = ventes.exclude(paye=True)
+    sommenp = ventesnp.aggregate(Sum('prix'))['prix__sum'] or 0.00
+
 
     paginator = Paginator(ventes, 50) # 10 posts in each page
 
@@ -353,22 +361,33 @@ def vente_list(request,period = None):
     return render(request, 'vente_list.html', {'page': page,
                                                  'nambir': ventes.count(),
                                                    'posts':posts,
-                                                   'globalite': globalite,
-                                        
+                                             
+                                                   'ventesnp':ventesnp,
+                                                   'sommenp':sommenp,
+                                                    'somme': somme,
                                                    })
 @staff_member_required
 def vente_detail(request, bl,facture):
-    ventes = Vente.objects.filter(numero_BL=bl,numero_facture=facture) 
+
+    if bl != "None" and facture == "None":
+        ventes =  Vente.objects.filter(numero_BL=bl)
+
+    elif bl == "None" and facture != "None":
+        ventes =  Vente.objects.filter(numero_facture=facture)  
+
+    elif bl != "None" and facture != "None":
+        ventes = Vente.objects.filter(numero_BL = bl, numero_facture=facture)
     
-    ventes = ventes.order_by("produit__nom_produit").annotate(
-        price= (F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
-    gg = ventes.first()       
-    globalite = 0 
-    for t in ventes:
-        globalite = globalite + t.price
+   
+    ventes = ventes.exclude(gratuit=True)
+    somme = ventes.aggregate(Sum('prix'))['prix__sum'] or 0.000
+    
+
+   
+
     return render(request, 'vente_detail.html', {'ventes': ventes,           
-                                                 'globalite': globalite ,
-                                                   'gg':gg,  })
+                                                 'somme': somme ,                                              
+                                                   })
 
 @login_required
 def produit_list(request):
@@ -407,8 +426,20 @@ class produit_ajouter(CreateView):
     template_name = "produit_ajouter.html"
     success_message = "%(produit)s ajouté avec succés"
     def get_success_url(self):
+        messages.success(self.request,f'Produit ajouté avec succés')
         return (reverse('stock:produit_list'))
-    
+
+
+@method_decorator(login_required, name='dispatch')
+class remise_ajouter(CreateView):
+    model = RemiseClient
+    form_class = remiseAjoutForm
+    template_name = "remise_ajouter.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Remise ajouté avec succés')
+        return (reverse('stock:client_list'))
+
+
 def produit_detail(request, id):
     form=produitAjoutForm()
 
@@ -431,6 +462,7 @@ class produitUpdateView(UpdateView):
     template_name = "produit_modifier.html"
     context_object_name = "prd"
     def get_success_url(self):
+        messages.success(self.request,f'Produit mis à jour avec succés')
         return (reverse('stock:produit_list'))
     
     def updateimage(request, id):  #this function is called when update data
@@ -443,7 +475,118 @@ class produitUpdateView(UpdateView):
         else:
             messages.error(request,"ATTENTION, l'operation à echoué")
             return (reverse('stock:produit_list'))
-      
+
+
+
+@login_required
+def client_list(request):
+    clt = Client.objects.all()
+    
+    query = request.GET.get('q')
+    
+    
+    paginator = Paginator(clt, 10) # 5 posts in each page
+    page = request.GET.get('page')
+    
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer deliver the first page
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range deliver last page of results
+        posts = paginator.page(paginator.num_pages)
+    return render(request, 'client_list.html', {'page': page,
+                                                 'nambir': clt.count(),
+                                                   'posts':posts,
+                                                   }) 
+
+@method_decorator(login_required, name='dispatch')
+class client_ajouter(CreateView):
+    model = Client
+    form_class = clientAjoutForm
+    template_name = "client_ajouter.html"
+   
+    def get_success_url(self):
+        messages.success(self.request,f'Client ajouté avec succés')
+        return (reverse('stock:client_list'))
+
+
+class remiseUpdateView(UpdateView):
+    # specify the model you want to use
+    model = RemiseClient
+
+    fields = [
+        
+        
+        "taux_remise",
+        
+    ]
+    template_name = "remise_modifier.html"
+    context_object_name = "del"
+    def get_success_url(self):
+        messages.success(self.request,f'Remise mise à jour avec succés')
+        return (reverse('stock:client_list'))
+
+
+class delegueUpdateView(UpdateView):
+    # specify the model you want to use
+    model = Delegue
+
+    fields = [
+        
+        "base",
+        
+    ]
+    template_name = "delegue_modifier.html"
+    context_object_name = "del"
+    def get_success_url(self):
+        messages.success(self.request,f'Délegué mis à jour avec succés')
+        return (reverse('stock:delegue_list'))
+    
+class clientUpdateView(UpdateView):
+    # specify the model you want to use
+    model = Client
+
+    fields = [
+        
+        "description",
+        "telephone",
+        "base_client",
+        
+        "type_client"
+    ]
+    template_name = "client_modifier.html"
+    context_object_name = "clt"
+    def get_success_url(self):
+        messages.success(self.request,f'Client mis à jour avec succés')
+        return (reverse('stock:client_list'))
+
+
+class clientDeleteView(DeleteView):
+    model = Client
+    template_name = "client_effacer.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Client supprimé avec succés')
+        return (reverse('stock:client_list'))
+
+
+class remiseDeleteView(DeleteView):
+    model = RemiseClient
+    template_name = "remise_effacer.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Remise supprimé avec succés')
+        return (reverse('stock:client_list'))
+
+def produit_detail(request, id):
+    form=produitAjoutForm()
+
+    prd = get_object_or_404(Produit, id=id) 
+    return render(request, 'produit_detail.html', {'prd': prd,
+                                                   })
+
+
+
 @staff_member_required
 def venteClient(request,id,period=None):
     cl = get_object_or_404(Client,id=id)
@@ -465,34 +608,22 @@ def venteClient(request,id,period=None):
 
         elif period == '4' :
             historique = historique.filter(date_vente__month = month , date_vente__year=year)   
+    
     gratuite = historique
     historique2= historique
     gratuite = gratuite.filter(gratuit=True)
     historique = historique.exclude(gratuit=True)
-    historique = historique.annotate( price=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
+    somme = historique.aggregate(Sum('prix'))['prix__sum'] or 0.000
     
-    # historique = historique.annotate(price=Case(
-    #     When (gratuit=False,then=Value(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') )) ,
-    #     default=Value(0),
-    #     output_field=DecimalField() ))
-
-
-
     historique2 = historique.exclude(paye=True)
-    historique2 = historique2.annotate( price2=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
-  
+    sommenp = historique2.aggregate(Sum('prix'))['prix__sum'] or 0.000
 
-    globalite = 0 
-    for t in historique:
-        globalite = globalite + t.price
-    globalite2 = 0 
-    for t in historique2:
-        globalite2 = globalite2 + t.price2    
+ 
     return render(request, 'vente_client_historique.html', {'historique': historique, 
                                                  'nambir': historique.count(),
-                                                 'globalite': globalite,
+                                                 'somme': somme,
                                                  'cl':cl,
-                                                 'globalite2': globalite2,
+                                                 'sommenp': sommenp,
                                                  'historique2': historique2,
                                                  'gratuite':gratuite})
 
@@ -516,31 +647,22 @@ def vente_bl_facture(request) :
     gratuite = gratuite.filter(gratuit=True)
     selected_bl = selected_bl.exclude(gratuit=True)
     selected_bl = selected_bl.annotate( price=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
+    somme = selected_bl.aggregate(Sum('prix'))['prix__sum'] or 0.000
 
 
 
 
     historique2 = selected_bl.exclude(paye=True)
-    historique2 = historique2.annotate( price2=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
-  
-    
-    globalite = 0 
-    for t in selected_bl:
-        globalite = globalite + t.price
-    globalite2 = 0 
-    for tt in historique2:
-        globalite2 = globalite2 + tt.price2   
-
-
-    
+    #historique2 = historique2.annotate( price2=(F('quantite_vendu') * F('client__taux_remise') * F('produit__prix') ))
+    sommenp = historique2.aggregate(Sum('prix'))['prix__sum'] or 0.000
 
     return render(request, 'vente_detail_BlFact.html', {
-        #  'cl':cl,
+   
             'selected_bl': selected_bl,
                                                              'nambir': selected_bl.count(),
-                                                 'globalite': globalite,
+                                                 'somme': somme,
                                              
-                                                 'globalite2': globalite2,
+                                                 'sommenp': sommenp,
                                                  'historique2': historique2,
                                                  'gratuite':gratuite})
 
@@ -548,7 +670,7 @@ def vente_bl_facture(request) :
  
 @staff_member_required  
 def vente_ca(request,period=None):
-    ventes = Vente.objects.all()
+    ventes = Vente.objects.filter(gratuit=False)
 
     yesterday = date.today() - timedelta(days=1)
     week = ExtractWeek(date.today())
@@ -571,11 +693,13 @@ def vente_ca(request,period=None):
 #     annotation = {
 #     'AcSum': Sum('quantite_vendu')
 # }
-    print(period)
-    ventes = ventes.order_by('client__nom_client').values('client__nom_client').annotate(AcSum= Sum(
-    F('quantite_vendu') * F('client__taux_remise') * F('produit__prix')
+    
+    # ventes = ventes.order_by('client__nom_client').values('client__nom_client').annotate(AcSum= Sum(
+    # F('quantite_vendu') * F('client__taux_remise') * F('produit__prix')
 
-    ))
+    # ))
+    ventes = ventes.order_by('client__nom_client').values('client__nom_client').annotate(AcSum= Sum(
+     'prix' ))
     max = ventes.order_by('-AcSum')[:1]
     
 
@@ -591,6 +715,7 @@ def vente_ca(request,period=None):
     return render(request, 'vente_ca.html', {'ventes':ventes,
                                                 'nambir': ventes.count(),
                                             'max':max,
+                                          
                                            
                                                 } )
 
@@ -827,6 +952,71 @@ def export_produits_xls(request):
 
     wb.save(response)
     return response      
+
+
+@login_required
+def export_clients_xls(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="clients.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('clients')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['nom_client', 'description','telephone', 'base_client','taux_remise',]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = Client.objects.all().values_list('nom_client', 'description','telephone', 'base_client','taux_remise')
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response      
+
+
+@login_required
+def export_delegues_xls(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="delegues.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('delegues')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['nom_delegue', 'base','nom echantillon', 'quantite echantillon','date']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = Delegue.objects.all().values_list('nom_delegue', 'base', 'visitemedicaleDelegue__produit__nom_produit','visitemedicaleDelegue__quantite_donne','visitemedicaleDelegue__date')
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response    
+
 
 
 @staff_member_required

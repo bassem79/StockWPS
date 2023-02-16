@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}<title>Liste des délégués</title>{% endblock %}
@@ -7,47 +8,49 @@
 
 {% block content %}
 
-
-
-
-<table border>
-    <tr></tr><td><a href="{% url 'stock:delegue_list' %}" class="btn btn-info">Liste délegués</a></td>
-    <td><a href="{% url 'stock:delegue_ajouter' %}" class="btn btn-info">Ajouter un délegué</a></td></tr>
-    
-    </table>
-<br><br><br><br>
-<h1>Liste de(s) {{nambir}} délégué(s) </h1>
-<br><br><br>
+<h3>Liste de(s) {{nambir}} client(s) </h3>
+<br>>
 <h5>Filtrer les délégués par Zone :</h5>
 
-<ul> 
-<li><a href="{% url 'stock:delegue_list_zone' 'Nord' %}">Nord</a></li>
-<li><a href="{% url 'stock:delegue_list_zone' 'Centre' %}">Centre</a></li>
-<li><a href="{% url 'stock:delegue_list_zone' 'Sfax' %}">Sfax</a></li>
-<li><a href="{% url 'stock:delegue_list_zone' 'Sud' %}">Sud</a></li>
-</ul>
 
 
 
+<table>
+    <tr>
+    <td width="5%"><a href="{% url 'stock:delegue_list_zone' 'Nord' %}">Aujourd'hui</a></td>
+    <td><a href="{% url 'stock:delegue_list_zone' 'Centre' %}">Centre</a></td>
+    <td><a href="{% url 'stock:delegue_list_zone' 'Sfax' %}">Sfax</a></td>
+    <td><a href="{% url 'stock:delegue_list_zone' 'Sud' %}">Sud</a></td>
+    <td><a href="{% url 'stock:delegue_list'  %}">Tous</a></td>
+    </tr>
+     </table>
 
-<br><br>
-
-<div style="  border: 2px outset rgb(255, 255, 248);
-background-color: rgb(226, 236, 236);
-text-align: center;">
-{% for del in posts %}
-
+<br>
 <div class="post-author">
-<h5>le délégué {{del.nom_delegue}} basé sur {{del.base}}</h5>
-
-</div>
-<div>
- <a href="{{ del.get_absolute_url }}" class="btn btn-success">Détails échantillons</a>
-<br/><br/><br/>
-</div>
-<hr>
+<table class="styled-table">
+<tr>
+<th>Nom Délegué</th>
+<th>Base</th>    
+<th>Détail échantillon</th>
+<th>Modifier ?</th>
+<th>Supprimer ?</th>
+</tr> 
+{% for ab in posts %}   
+<tr>
+<td>{{ab.nom_delegue}}</td>
+<td>{{ab.base}} </td>
+<td><a href="{{ab.get_absolute_url}}"> Détail(s)</a></td>
+<td><a href="{% url 'stock:delegue_modifier' ab.id%}">Modifier</a></td>
+<td><a href="{% url 'stock:delegue_supprimer' ab.id%}">Supprimer</a></td>
+</tr>
 {% endfor %}
+</table>
+
+
 {% include "pagination.html" with page=posts %}
+
+
+
 </div>
 
 {% endblock %}

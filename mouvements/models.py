@@ -88,7 +88,19 @@ models.Index(fields=['nom_client']),
         return self.nom_client
     def get_absolute_url(self):
         return reverse('stock:client_detail', args=[self.id])
+
+class RemiseClient(models.Model)   :
     
+    client= models.ForeignKey(Client,on_delete=models.PROTECT,related_name='remiseclient') 
+    taux_remise = models.DecimalField(max_digits=10,decimal_places=2,blank=True, null=True,default=0)
+    date_remise = models.DateField(auto_now_add=True)
+    class Meta:
+        ordering = ['date_remise']
+    def save(self, *args, **kwargs):
+        self.client.taux_remise = self.taux_remise 
+        self.client.save()
+        super(RemiseClient,self).save(*args, **kwargs)
+
 class VisiteMedicale(models.Model):
     delegue= models.ForeignKey(Delegue,on_delete=models.CASCADE,related_name='visitemedicaleDelegue')
     produit = models.ForeignKey(Produit,on_delete=models.CASCADE,related_name='visitemedicaleProduit')
@@ -123,7 +135,9 @@ class Vente(models.Model):
     numero_BL = models.CharField(max_length=200,blank=True, null=True)
     numero_facture = models.CharField(max_length=200,blank=True, null=True)
     quantite_vendu = models.PositiveIntegerField(default=0)
-    date_vente = models.DateField(auto_now_add=True)
+    montant_remise = models.DecimalField(max_digits=10,decimal_places=3,blank=True, null=True,default=0)
+    prix = models.DecimalField(max_digits=10,decimal_places=3,blank=True, null=True,default=0)
+    date_vente = models.DateField(auto_now_add=True,blank=True, null=True)
     moyen_payement = models.CharField(max_length=20,choices=payement,default="espèces")
     paye = models.BooleanField(default=False)
     gratuit = models.BooleanField(default=False)
@@ -134,18 +148,22 @@ class Vente(models.Model):
 
     def __str__(self):
         return f"{self.client.nom_client} à acheté {self.quantite_vendu} du produit {self.produit.nom_produit}"
+    
+
+    
+
+
     def save(self, *args, **kwargs):
         if self.gratuit and self.moyen_payement != "gratuit" :
             raise ValidationError(f"quand gratuit est coché le moyen de payement doit être gratuit")
         elif not self.gratuit and self.moyen_payement == "gratuit" :
             raise ValidationError(f"Quand le moyen de payement est gratuit la case gratuit doit être cochée")
-        # elif self.quantite_vendu > self.produit.quantite_stock:
-        #     raise ValidationError(f"ATTENTION !! Vous avez seulement {self.produit.quantite_stock} en stock !!")
-        # else:            
-        #     b=Produit.objects.get(nom_produit = self.produit.nom_produit)
-        #     b.quantite_stock =  b.quantite_stock - self.quantite_vendu
-        #     b.save(update_fields=["quantite_stock"])
         super().save(*args, **kwargs)
+
+            
+
+        
+
 
             
 

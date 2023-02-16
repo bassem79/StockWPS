@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Ajouter Remise</title>{% endblock %}
+{% block content %}
+    <h1>Ajouter Remise</h1>
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+
+
+
+        <input type="submit" class="btn btn-success" value="Ajouter">
+    </form>
+
+
+
+
+{% endblock %}
+

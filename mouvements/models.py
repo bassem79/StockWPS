@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.exceptions import ValidationError
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Produit(models.Model):
@@ -71,7 +71,14 @@ class Client(models.Model):
     nom_client = models.CharField(max_length=200,unique = True)
     #slug = models.SlugField(max_length=200)
     description = models.TextField(blank=True)
-    telephone = models.CharField(max_length=20)
+    fonction1= models.CharField(max_length=70,blank=True, null=True)
+    telephone1 = models.CharField(max_length=20,blank=True, null=True)
+    fonction2= models.CharField(max_length=70,blank=True, null=True)
+    telephone2 = models.CharField(max_length=20,blank=True, null=True)
+    fonction3= models.CharField(max_length=70,blank=True, null=True)
+    telephone3 = models.CharField(max_length=20,blank=True, null=True)
+    fonction4= models.CharField(max_length=70,blank=True, null=True)
+    telephone4 = models.CharField(max_length=20,blank=True, null=True)
     base_client = models.CharField(max_length=10, choices=zone, default='nord')
     type_client = models.CharField(max_length=10, choices=type, default='grossiste')
     taux_remise =   models.DecimalField(max_digits=10,decimal_places=2,blank=True, null=True,default=0)
@@ -91,8 +98,10 @@ models.Index(fields=['nom_client']),
 
 class RemiseClient(models.Model)   :
     
+        
+    PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]
     client= models.ForeignKey(Client,on_delete=models.PROTECT,related_name='remiseclient') 
-    taux_remise = models.DecimalField(max_digits=10,decimal_places=2,blank=True, null=True,default=0)
+    taux_remise = models.DecimalField(max_digits=3, decimal_places=0, default=0, validators=PERCENTAGE_VALIDATOR)
     date_remise = models.DateField(auto_now_add=True)
     class Meta:
         ordering = ['date_remise']

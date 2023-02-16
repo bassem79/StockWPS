@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}<title>{{ delegue.nom_delegue }}</title>{% endblock %}
+
+{% block content %}
+<style>
+    
+</style>
+
+<h2>Le délégué {{ delegue.nom_delegue }} est basé sur <em>{{ delegue.base }} </em></h2>
+
+
+
+<h3>Liste de tous les échantillons données filtrés:</h3>
+<table class="styled-table" >
+<tr>
+    <th>Date</th>
+    <th>Nom produit</th>
+    <th>Quantité donnée </th>
+</tr>
+{% for ab in total %}
+<tr>
+    <td>{{ab.date}}</td>
+    <td>{{ab.produit.nom_produit}}</td>
+    <td>{{ab.quantite_donne}}</td>
+
+</tr>
+{% endfor %}
+</table>
+
+
+
+<table class="styled-table">
+    <tr>
+<td><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></td>
+<td><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></td>
+
+    </tr>        
+</table>  
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

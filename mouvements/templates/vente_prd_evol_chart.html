@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_prd_evol_chart' %}">
+        {% csrf_token %}
+ 
+
+
+    <label for="prd">Nom produit:</label>
+    
+    <select id="prd" name="prd">
+        <option value= "None">--Choisir produit--</option>
+{% for ab in prd %}
+
+{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}
+{% endfor %}
+</select>  
+
+ <label for="ddd">Date début:</label>
+  <input id ="ddd" type ="date" name="dd" default = "None"/>
+    
+
+  <label for="fff">Date fin:</label>
+  <input id ="fff" type ="date" name="df"/>
+
+<input type="submit" value="Filtrer" />
+</form>  
+</div>    
+<br>
+
+<div id="container"></div>
+
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'line'
+      },
+      title: {
+          text: 'Ventes du produit {{prdd}}'
+      },
+      xAxis: {
+          categories: [
+            {% for entry in dataset %}'{{ entry.date_vente }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Ventes produits',
+          data: [
+            {% for entry in dataset %}{{ entry.totqte }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      }, ]
+  });
+</script>
+
+
+
+
+{% endblock %}

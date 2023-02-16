@@ -27,7 +27,7 @@
     <script src="{% static 'js/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
 
 
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
     <style>
 .styled-table {
@@ -143,7 +143,7 @@ table.bassem{margin:1%%}
                         <!-- Single Widget Area -->
  
 
-
+                        {% if request.user.is_authenticated %}
                         <!-- Single Widget Area -->
                         <div class="single-widget-area popular-post-widget">
                             <div class="widget-title text-center">
@@ -164,6 +164,7 @@ table.bassem{margin:1%%}
 
                             </div>
                         </div>
+                        {% endif %}
 
 
 
@@ -172,8 +173,9 @@ table.bassem{margin:1%%}
                                 <h6>Raccourcis</h6>
                             </div>
                             <!-- Single Popular Post -->
+                            {% if request.user.is_authenticated %}
                             <div class="single-populer-post d-flex">
-                                 
+                                
                                 <div class="post-content">
                                     <a href=" {% url 'stock:vente_list' %}"> <h6>Liste des ventes</h6></a>
                                     <a href=" {% url 'stock:vente_ajouter' %}"> <h6>Ajouter vente</h6></a>
@@ -184,11 +186,16 @@ table.bassem{margin:1%%}
 
                                 </div>
                             </div>
+                            {% else %}
+                            <div class="post-content">
+                                <a href=" {% url 'stock:connexion' %}"> <h6>Connexion</h6></a>
+                            </div> 
+                            {% endif %}   
                         </div>
 
 
 
-
+                        {% if request.user.is_authenticated %}
 
                          <div class="single-widget-area popular-post-widget">
                             <div class="widget-title text-center">
@@ -217,7 +224,7 @@ table.bassem{margin:1%%}
                                 </div>
 
 
-
+                                {% endif %}
 
 
 

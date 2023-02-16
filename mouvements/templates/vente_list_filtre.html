@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% block title %} <title>Liste des Ventes</title> {% endblock %}
+{% block title %} <title>Liste des Ventes filtrées</title> {% endblock %}
 
 
 
@@ -11,85 +11,6 @@
 
 
 <h4>Liste de(s) {{nambir}} ventes(s) </h4>
-
-Filtrer les ventes par période :
-
- <table>
-<tr>
-<td width="5%"><a href="{% url 'stock:vente_list_period' '1' %}">Aujourd'hui</a></td>
-<td><a href="{% url 'stock:vente_list_period' '2' %}">Hier</a></td>
-<td><a href="{% url 'stock:vente_list_period' '3' %}">Cette semaine</a></td>
-<td><a href="{% url 'stock:vente_list_period' '4' %}">Ce mois</a></td>
-<td><a href="{% url 'stock:vente_list'  %}">Tous</a></td>
- </table>
-<br>
-<h5 style="background:pink;">Filtrer les ventes par numéro BL/Facture :</h5>
-
-<div style="background:pink;">
-    <form action="{% url 'stock:vente_bl_facture' %}" method="post">
-         {% csrf_token %}
-        N° BL  <select name="bl">
-            <option value= "None">--Choisir BL--</option>
-{% for ab in posts%}
-
-{% ifchanged %}<option  value="{{ab.numero_BL}}">{{ab.numero_BL}}</option>{% endifchanged %}
-{% endfor %}
-</select>    
-      N° Facture <select name="fact">
-        <option value="None">--Choisir Facture--</option>
-    {% for ab in posts%}
-    {% ifchanged %}<option  value="{{ab.numero_facture}}">{{ab.numero_facture}}</option>{% endifchanged %}
-    {% endfor %}
-    </select>    
-<input type="submit" value="filtrer">
-</form></div>
-<br>
-
-<div>
-    <h6>Filtre personnalisée</h6>
-    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_list_filtre' %}">
-        {% csrf_token %}
-<fieldset>
-
-
-    <label for="ddd">Date début:</label>
-    <input id ="ddd" type ="date" name="dd" default = "None"/>
-         
-
-    <label for="fff">Date fin:</label>
-    <input id ="fff" type ="date" name="df"/>
-</fieldset> 
-  
-
-
-    <label for="prd">Nom produit:</label>
-    
-    <select id="prd" name="prd">
-        <option value= "None">--Choisir produit--</option>
-{% for ab in prd %}
-
-{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}
-{% endfor %}
-</select>  
-
-
-
-    <label for="clt">Nom client:</label>
-    
-    <select id="clt" name="clt">
-        <option value= "None">--Choisir client--</option>
-{% for ab in clt %}
-
-{% ifchanged %}<option  value="{{ab.nom_client}}">{{ab.nom_client}}</option>{% endifchanged %}
-{% endfor %}
-</select>    
-
-</fieldset> 
-  <br>
-<input type="submit" value="Filtrer" />
-</form>  
-</div>    
-<br>
 
 <div class="post-author">
 <table class="styled-table">
@@ -108,7 +29,7 @@ Filtrer les ventes par période :
     <th>Montant remise</th>
     <th>Total</th>
 </tr>  
-{% for ab in posts %}
+{% for ab in total %}
 
 <tr>
 <td>{{ab.date_vente}}</td>
@@ -127,7 +48,6 @@ Filtrer les ventes par période :
 {% endfor %} 
 
 </table>
-{% include "pagination.html" with page=posts %}
 <h5>Le montant total des ventes est de  {{somme|floatformat:3|intcomma }} DT</h5>
 
 </div>
@@ -149,7 +69,7 @@ Filtrer les ventes par période :
         <th>Montant remise</th>
         <th>Total</th>
     </tr>  
-    {% for ab in ventesnp %}
+    {% for ab in totalnp %}
     
     <tr>
     <td>{{ab.date_vente}}</td>
@@ -187,7 +107,7 @@ Filtrer les ventes par période :
         
 
         </tr>  
-        {% for ab in postss %}
+        {% for ab in gratuit %}
         
         <tr>
         <td>{{ab.date_vente}}</td>

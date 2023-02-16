@@ -138,11 +138,34 @@ def delegue_detail(request, id):
     total = delegue.visitemedicaleDelegue.all().order_by("-date","produit__nom_produit")
     echantillon = delegue.visitemedicaleDelegue.filter(date__month = month,date__year =year).values("produit__nom_produit").order_by("produit__nom_produit").annotate(total_qte=Sum('quantite_donne')) 
     echantillon2 = delegue.visitemedicaleDelegue.filter(date__year =year).values("produit__nom_produit").order_by("produit__nom_produit").annotate(total_qte=Sum('quantite_donne'))  
+    selected_prd = Produit.objects.all()
+
+
+    
 
     return render(request, 'delegue_detail.html', {'delegue': delegue,
                                                      'echantillon': echantillon,
                                                      'echantillon2': echantillon2,
-                                                     'total': total      })
+                                                     'total': total,
+                                                    'selected_prd': selected_prd,     })
+
+
+
+@login_required
+def delegue_detail_filtre(request, id):
+    total=VisiteMedicale.objects.filter(delegue=id)
+
+    if request.POST['dd']  :
+        total=total.filter(date__gte = request.POST['dd']) 
+
+    if request.POST['df']  :
+        total=total.filter(date__lte = request.POST['df']) 
+
+    if request.POST['prd']  != "None" :
+        total=total.filter(produit__nom_produit = request.POST['prd'])   
+        
+    return render(request, 'delegue_detail_filtre.html', { 'total': total,
+                                                       })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -240,7 +263,7 @@ def Vente_ajouter(request):
                 # for ab in tmp:
                 #     tab.append({'nom':produit,'qte':ab.quantite_vendu})
                 if client.taux_remise != 0:
-                    prix = quantite_vendu * (1-client.taux_remise) * tmp.prix
+                    prix = quantite_vendu * (1-client.taux_remise/100) * tmp.prix
                     montant_remise = quantite_vendu * tmp.prix - prix
                 else:
                     prix = quantite_vendu  * tmp.prix
@@ -306,7 +329,8 @@ def Vente_ajouter(request):
 @staff_member_required
 def vente_list(request,period = None):
     ventes = Vente.objects.all().order_by('client__nom_client')
-
+    prd = Produit.objects.all()
+    clt=Client.objects.all()
     today =ExtractDay(date.today())
     yesterday = date.today() - timedelta(days=1)
     week = ExtractWeek(date.today())
@@ -361,11 +385,45 @@ def vente_list(request,period = None):
     return render(request, 'vente_list.html', {'page': page,
                                                  'nambir': ventes.count(),
                                                    'posts':posts,
-                                             
+                                                'prd':prd,
+                                                'clt':clt,
                                                    'ventesnp':ventesnp,
                                                    'sommenp':sommenp,
                                                     'somme': somme,
                                                    })
+
+
+
+def vente_list_filtre(request):
+    
+    total=Vente.objects.all()
+
+    if request.POST['dd']  :
+        total=total.filter(date_vente__gte = request.POST['dd']) 
+
+    if request.POST['df']  :
+        total=total.filter(date_vente__lte = request.POST['df']) 
+
+    if request.POST['prd']  != "None" :
+        total=total.filter(produit__nom_produit = request.POST['prd'])   
+    if request.POST['clt']  != "None" :
+        total=total.filter(client__nom_client = request.POST['clt'])   
+        
+    
+    gratuit=total.filter(gratuit=True)
+    total=total.exclude(gratuit=True)
+    totalnp = total.filter(paye=False)
+    somme = total.aggregate(Sum('prix'))['prix__sum'] or 0.00
+    sommenp = totalnp.aggregate(Sum('prix'))['prix__sum'] or 0.00
+        
+    return render(request, 'vente_list_filtre.html', { 'total': total,
+                                                      'totalnp' : totalnp,
+                                                      'somme':somme,
+                                                      'sommenp':sommenp,
+                                                      'gratuit' : gratuit,
+                                                      'nambir' : total.count()
+                                                       })    
+
 @staff_member_required
 def vente_detail(request, bl,facture):
 
@@ -1059,3 +1117,69 @@ def vente_max_produit(request,period=None):
                                             'max':max,
                                            'ventestot':ventestot
                                                 } )
+
+
+
+
+def vente_prd_chart(request):
+    dataset = Vente.objects \
+        .values('produit__nom_produit') \
+        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
+                 ) \
+        .order_by('produit__nom_produit')
+ 
+
+    return render(request, 'vente_prd_chart.html', {'dataset': dataset})
+
+def vente_prd_filtre_chart(request):
+    dataset = Vente.objects \
+        .values('produit__nom_produit') \
+        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
+                 ) \
+        .order_by('produit__nom_produit')
+    if request.POST['dd']  :
+        dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+    if request.POST['df']  :
+        dataset=dataset.filter(date_vente__lte = request.POST['df'] )    
+
+    return render(request, 'vente_prd_chart.html', {'dataset': dataset})
+
+
+def vente_clt_chart(request):
+    dataset = Vente.objects \
+        .values('client__nom_client') \
+        .annotate(totqte=Sum('prix')#, filter=Q(survived=True)),
+                 ) \
+        .order_by('client__nom_client')
+    return render(request, 'vente_clt_chart.html', {'dataset': dataset})
+
+def vente_clt_filtre_chart(request):
+    dataset = Vente.objects \
+        .values('client__nom_client') \
+        .annotate(totqte=Sum('prix')#, filter=Q(survived=True)),
+                 ) \
+        .order_by('client__nom_client')
+    if request.POST['dd']  :
+        dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+    if request.POST['df']  :
+        dataset=dataset.filter(date_vente__lte = request.POST['df'] ) 
+    return render(request, 'vente_clt_chart.html', {'dataset': dataset})
+
+
+def vente_prd_evol_chart(request):
+   
+    prd=Produit.objects.all()
+    dataset= Vente.objects.all()
+    if request.method == 'POST':
+        if request.POST['prd']  :
+            dataset = Vente.objects.filter(produit__nom_produit=request.POST['prd']) \
+        .values('date_vente') \
+        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
+                 ) \
+        .order_by('date_vente')
+        if request.POST['dd']  :
+            dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+        if request.POST['df']  :
+            dataset=dataset.filter(date_vente__lte = request.POST['df'] )     
+        return render(request, 'vente_prd_evol_chart.html', {'dataset': dataset,'prdd':request.POST['prd']})
+    return render(request, 'vente_prd_evol_chart.html', {'prd':prd})

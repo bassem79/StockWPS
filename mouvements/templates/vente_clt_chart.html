@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_clt_filtre_chart' %}">
+        {% csrf_token %}
+    <label for="ddd">Date début:</label>
+    <input id ="ddd" type ="date" name="dd" default = "None"/>
+      
+  
+    <label for="fff">Date fin:</label>
+    <input id ="fff" type ="date" name="df"/>
+  
+  <input type="submit" value="Filtrer" />
+  </form>  
+  </div>    
+  <br>
+<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+
+
+
+<script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: 'total ventes par clients'
+      },
+      xAxis: {
+          categories: [
+            {% for entry in dataset %}'{{ entry.client__nom_client }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Ventes produits (TND)',
+          data: [
+            {% for entry in dataset %}{{ entry.totqte }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      }, ]
+  });
+</script>
+
+{% endblock %}

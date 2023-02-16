@@ -11,6 +11,9 @@ path('init_password/', views.changepassword, name='init_password'),
 path('delegue/', views.delegue_list, name='delegue_list'),
 path('<str:zone>/delegue/', views.delegue_list, name='delegue_list_zone'),
 path('delegue/<int:id>/', views.delegue_detail, name='delegue_detail'),
+
+path('delegue/filtre/<int:id>/', views.delegue_detail_filtre, name='delegue_detail_filtre'),
+
 path('delegue/ajouter/', views.delegue_ajouter.as_view(), name='delegue_ajouter'),
 path('delegue/supprimer/<pk>/', views.delegue_supprimer.as_view(),name='delegue_supprimer'),
 path('delegue/<pk>/update', views.delegueUpdateView.as_view(),name='delegue_modifier'), 
@@ -18,6 +21,8 @@ path('delegue/<pk>/update', views.delegueUpdateView.as_view(),name='delegue_modi
 path('vente/ajouter/', views.Vente_ajouter,name='vente_ajouter'),
 path('visite/', views.visite_ajouter,name='visite_ajouter'),
 
+
+path('vente/filtre/', views.vente_list_filtre, name='vente_list_filtre'),
 path('vente/', views.vente_list, name='vente_list'),
 path('<str:period>/vente/', views.vente_list, name='vente_list_period'),
 path('vente/<str:bl>/<str:facture>/', views.vente_detail, name='vente_detail'),
@@ -63,4 +68,10 @@ path('export/xls/ventes', views.export_ventes_xls, name='export_ventes_xls'),
 path('export/xls/produits', views.export_produits_xls, name='export_produits_xls'),
 path('export/xls/clients', views.export_clients_xls, name='export_clients_xls'),
 path('export/xls/delegues', views.export_delegues_xls, name='export_delegues_xls'),
+
+path('vente_prd_chart/', views.vente_prd_chart,name='vente_prd_chart'),
+path('vente_prd_filtre_chart/', views.vente_prd_filtre_chart,name='vente_prd_filtre_chart'),
+path('vente_clt_chart/', views.vente_clt_chart,name='vente_clt_chart'),
+path('vente_clt_filtre_chart/', views.vente_clt_filtre_chart,name='vente_clt_filtre_chart'),
+path('vente_prd_evol_chart/', views.vente_prd_evol_chart,name='vente_prd_evol_chart'),
 ]

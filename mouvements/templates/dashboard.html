@@ -28,8 +28,9 @@
 {% else %}
 <h3 style="color:green">Quantité en stock de tous les produits est supérieur au seuil défini</h3>
 {% endif %}
+{% if request.user.is_authenticated %}
 <p><a href="{% url 'stock:produit_list' %}"> Liste des articles </a>
-
+{% endif %}
 {% endblock %}
 </div>
 

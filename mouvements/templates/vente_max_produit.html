@@ -14,17 +14,16 @@
 
 <h5>Filtrer les ventes par période :</h5>
 
-<ul> 
-<li><a href="{% url 'stock:vente_max_period' '1' %}">Aujourd'hui</a></li>
-<li><a href="{% url 'stock:vente_max_period' '2' %}">Hier</a></li>
-<li><a href="{% url 'stock:vente_max_period' '3' %}">Cette semaine</a></li>
-<li><a href="{% url 'stock:vente_max_period' '4' %}">Ce mois</a></li>
-<li><a href="{% url 'stock:vente_max_period' '5' %}">Cette année</a></li>
-<li><a href="{% url 'stock:vente_max'  %}">Tous</a></li>
-</ul>
-
-
-<br><br><br>
+<table>
+    <tr>
+    <td width="5%"><a href="{% url 'stock:vente_max_period' '1' %}">Aujourd'hui</a></td>
+    <td><a href="{% url 'stock:vente_max_period' '2' %}">Hier</a></td>
+    <td><a href="{% url 'stock:vente_max_period' '3' %}">Cette semaine</a></td>
+    <td><a href="{% url 'stock:vente_max_period' '4' %}">Ce mois</a></td>
+    <td><a href="{% url 'stock:vente_max_period' '5' %}">Cette année</a></td>
+    <td><a href="{% url 'stock:vente_max'  %}">Tous</a></td>
+     </table>
+    <br>
 
 <h2>Cumul des {{nambir}} ventes par produit </h2>
 

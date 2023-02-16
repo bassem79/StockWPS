@@ -24,7 +24,7 @@ class DelegueAdmin(admin.ModelAdmin):
     
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ['nom_client', 'description','telephone','base_client','type_client','taux_remise']
+    list_display = ['nom_client', 'description','fonction1','telephone1','fonction2','telephone2','fonction3','telephone3','fonction4','telephone4','base_client','type_client','taux_remise']
     list_filter = ['nom_client', 'base_client','type_client','taux_remise']
     search_fields = ['nom_client', 'base_client','type_client','taux_remise']
     #prepopulated_fields = {'slug': ('nom_client',)}

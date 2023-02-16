@@ -8,6 +8,41 @@
 </style>
 
 <h2>Le délégué {{ delegue.nom_delegue }} est basé sur <em>{{ delegue.base }} </em></h2>
+<br>
+<div>
+    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:delegue_detail_filtre' delegue.id %}">
+        {% csrf_token %}
+<fieldset>
+
+
+    <label for="ddd">Date début:</label>
+    <input id ="ddd" type ="date" name="dd" default = "None"/>
+         
+
+    <label for="fff">Date fin:</label>
+    <input id ="fff" type ="date" name="df"/>
+</fieldset> 
+  
+
+
+    <label for="prd">Nom produit:</label>
+    
+    <select id="prd" name="prd">
+        <option value= "None">--Choisir produit--</option>
+{% for ab in selected_prd %}
+
+{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}
+{% endfor %}
+</select>  
+
+
+
+</fieldset> 
+  <br>
+<input type="submit" value="Filtrer" />
+</form>  
+</div>    
+<br>
 
 <h3>Liste de tous les échantillons données:</h3>
 <table class="styled-table" >

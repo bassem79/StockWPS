@@ -81,7 +81,7 @@ class Client(models.Model):
     telephone4 = models.CharField(max_length=20,blank=True, null=True)
     base_client = models.CharField(max_length=10, choices=zone, default='nord')
     type_client = models.CharField(max_length=10, choices=type, default='grossiste')
-    taux_remise =   models.DecimalField(max_digits=10,decimal_places=2,blank=True, null=True,default=0)
+    taux_remise =   models.DecimalField(max_digits=10,decimal_places=0,blank=True, null=True,default=0)
 
 
     class Meta:
@@ -95,6 +95,8 @@ models.Index(fields=['nom_client']),
         return self.nom_client
     def get_absolute_url(self):
         return reverse('stock:client_detail', args=[self.id])
+
+
 
 class RemiseClient(models.Model)   :
     

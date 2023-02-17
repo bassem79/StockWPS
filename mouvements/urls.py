@@ -74,4 +74,6 @@ path('vente_prd_filtre_chart/', views.vente_prd_filtre_chart,name='vente_prd_fil
 path('vente_clt_chart/', views.vente_clt_chart,name='vente_clt_chart'),
 path('vente_clt_filtre_chart/', views.vente_clt_filtre_chart,name='vente_clt_filtre_chart'),
 path('vente_prd_evol_chart/', views.vente_prd_evol_chart,name='vente_prd_evol_chart'),
+path('vente_base_chart/', views.vente_base_chart,name='vente_base_chart'),
+
 ]

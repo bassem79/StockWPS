@@ -952,14 +952,11 @@ def suppression(request,bl=None,fact=None):
 
 @login_required
 def export_ventes_xls(request):
+  
     
-    # Create filename from current date.
-    mask = '%d%m%Y'
-    dte = datetime.now().strftime(mask)
-    fname = "ventes_{}.xlsx".format(dte)
-
+    
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=%s' % fname
+    response['Content-Disposition'] = 'attachment; filename="ventes.xls"'
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('ventes')
@@ -1129,10 +1126,9 @@ def vente_max_produit(request,period=None):
 
 @staff_member_required
 def vente_prd_chart(request):
-    dataset = Vente.objects \
-        .values('produit__nom_produit') \
-        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
-                 ) \
+    dataset= Vente.objects.filter(gratuit=False)
+    dataset = dataset.values('produit__nom_produit') \
+        .annotate(totqte=Sum('quantite_vendu')) \
         .order_by('produit__nom_produit')
  
 
@@ -1140,10 +1136,10 @@ def vente_prd_chart(request):
 
 @staff_member_required
 def vente_prd_filtre_chart(request):
-    dataset = Vente.objects \
-        .values('produit__nom_produit') \
-        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
-                 ) \
+    dataset= Vente.objects.filter(gratuit=False)
+
+    dataset = dataset.values('produit__nom_produit') \
+        .annotate(totqte=Sum('quantite_vendu')) \
         .order_by('produit__nom_produit')
     if request.POST['dd']  :
         dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
@@ -1154,19 +1150,20 @@ def vente_prd_filtre_chart(request):
 
 @staff_member_required
 def vente_clt_chart(request):
-    dataset = Vente.objects \
-        .values('client__nom_client') \
-        .annotate(totqte=Sum('prix')#, filter=Q(survived=True)),
-                 ) \
-        .order_by('client__nom_client')
+    dataset= Vente.objects.filter(gratuit=False)
+    dataset = dataset.values('client__nom_client') \
+    .annotate(totqte=Sum('prix')) \
+    .order_by('client__nom_client')
+       # .annotate(totqte=Sum('prix'), filter=Q(gratuit=False)) \
+   
+        
     return render(request, 'vente_clt_chart.html', {'dataset': dataset})
 
 @staff_member_required
 def vente_clt_filtre_chart(request):
-    dataset = Vente.objects \
-        .values('client__nom_client') \
-        .annotate(totqte=Sum('prix')#, filter=Q(survived=True)),
-                 ) \
+    dataset= Vente.objects.filter(gratuit=False)
+    dataset = dataset.values('client__nom_client') \
+        .annotate(totqte=Sum('prix')) \
         .order_by('client__nom_client')
     if request.POST['dd']  :
         dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
@@ -1179,13 +1176,12 @@ def vente_clt_filtre_chart(request):
 def vente_prd_evol_chart(request):
    
     prd=Produit.objects.all()
-    dataset= Vente.objects.all()
+    dataset= Vente.objects.filter(gratuit=False)
     if request.method == 'POST':
         if request.POST['prd']  :
             dataset = Vente.objects.filter(produit__nom_produit=request.POST['prd']) \
         .values('date_vente') \
-        .annotate(totqte=Count('quantite_vendu')#, filter=Q(survived=True)),
-                 ) \
+        .annotate(totqte=Sum('quantite_vendu'))   \
         .order_by('date_vente')
         if request.POST['dd']  :
             dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
@@ -1193,3 +1189,28 @@ def vente_prd_evol_chart(request):
             dataset=dataset.filter(date_vente__lte = request.POST['df'] )     
         return render(request, 'vente_prd_evol_chart.html', {'dataset': dataset,'prdd':request.POST['prd']})
     return render(request, 'vente_prd_evol_chart.html', {'prd':prd})
+
+def vente_base_chart(request):
+    dataset = Vente.objects.filter(gratuit=False)
+    dataset2 = Vente.objects.filter(gratuit=False)
+    dataset = dataset.values('client__base_client','produit__nom_produit') \
+        .annotate(sumqte=Sum('quantite_vendu'), filter=Q(gratuit=False)) \
+        .order_by('client__base_client','produit__nom_produit')
+
+    dataset2 = dataset2.values('client__base_client') \
+        .annotate(sumqte=Sum('quantite_vendu')) \
+        .order_by('client__base_client')
+    if request.method == 'POST':
+        if request.POST['dd']  :
+            dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+            dataset2=dataset2.filter(date_vente__gte = request.POST['dd'] )
+        if request.POST['df']  :
+            dataset=dataset.filter(date_vente__lte = request.POST['df'] )
+            dataset2=dataset2.filter(date_vente__lte = request.POST['df'] )     
+     
+        return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2})
+    
+
+    return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2})
+   
+    

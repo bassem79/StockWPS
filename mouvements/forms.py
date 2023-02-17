@@ -23,7 +23,7 @@ class produitAjoutForm(forms.ModelForm):
 class clientAjoutForm(forms.ModelForm):
     class Meta:
         model = Client
-        fields = '__all__'
+        exclude = ['taux_remise',]
 
 
 

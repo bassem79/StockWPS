@@ -390,6 +390,7 @@ def vente_list(request,period = None):
                                                    'ventesnp':ventesnp,
                                                    'sommenp':sommenp,
                                                     'somme': somme,
+                                                    'postss':postss,
                                                    })
 
 
@@ -951,8 +952,14 @@ def suppression(request,bl=None,fact=None):
 
 @login_required
 def export_ventes_xls(request):
+    
+    # Create filename from current date.
+    mask = '%d%m%Y'
+    dte = datetime.now().strftime(mask)
+    fname = "ventes_{}.xlsx".format(dte)
+
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="ventes.xls"'
+    response['Content-Disposition'] = 'attachment; filename=%s' % fname
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('ventes')
@@ -1120,7 +1127,7 @@ def vente_max_produit(request,period=None):
 
 
 
-
+@staff_member_required
 def vente_prd_chart(request):
     dataset = Vente.objects \
         .values('produit__nom_produit') \
@@ -1131,6 +1138,7 @@ def vente_prd_chart(request):
 
     return render(request, 'vente_prd_chart.html', {'dataset': dataset})
 
+@staff_member_required
 def vente_prd_filtre_chart(request):
     dataset = Vente.objects \
         .values('produit__nom_produit') \
@@ -1144,7 +1152,7 @@ def vente_prd_filtre_chart(request):
 
     return render(request, 'vente_prd_chart.html', {'dataset': dataset})
 
-
+@staff_member_required
 def vente_clt_chart(request):
     dataset = Vente.objects \
         .values('client__nom_client') \
@@ -1153,6 +1161,7 @@ def vente_clt_chart(request):
         .order_by('client__nom_client')
     return render(request, 'vente_clt_chart.html', {'dataset': dataset})
 
+@staff_member_required
 def vente_clt_filtre_chart(request):
     dataset = Vente.objects \
         .values('client__nom_client') \
@@ -1166,6 +1175,7 @@ def vente_clt_filtre_chart(request):
     return render(request, 'vente_clt_chart.html', {'dataset': dataset})
 
 
+@staff_member_required
 def vente_prd_evol_chart(request):
    
     prd=Produit.objects.all()

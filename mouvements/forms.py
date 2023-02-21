@@ -39,7 +39,10 @@ class Entetevente(forms.ModelForm):
 
 
 
-
+class ContactclientForm(forms.ModelForm):
+    class Meta:
+        model = Contactclient
+        fields = '__all__'
 
 
 

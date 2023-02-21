@@ -2,44 +2,64 @@
 
 {% block content %}
 
-<div>
-    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_prd_evol_chart' %}">
+<div >
+    <form method="post" action="{% url 'stock:vente_prd_evol_chart' %}" class="form">
         {% csrf_token %}
- 
-
-
-    <label for="prd">Nom produit:</label>
-    
-    <select id="prd" name="prd">
-        <option value= "None">--Choisir produit--</option>
+ <label for="prd">Nom produit:</label> 
+ <select id="prd" name="prd">
+<option value= "">--Choisir produit--</option>
 {% for ab in prd %}
+{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}{% endfor %}</select>
 
-{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}
-{% endfor %}
-</select>  
+<label for="clt">Nom client:</label> 
+ <select id="clt" name="clt">
+<option value= "">--Choisir client--</option>
+{% for abb in clt %}
+{% ifchanged %}<option  value="{{abb.nom_client}}">{{abb.nom_client}}</option>{% endifchanged %}{% endfor %}</select>
 
- <label for="ddd">Date début:</label>
-  <input id ="ddd" type ="date" name="dd" default = "None"/>
-    
 
-  <label for="fff">Date fin:</label>
-  <input id ="fff" type ="date" name="df"/>
+<label for="ddd">Date début:</label><input id ="ddd" type ="date" name="dd" default = "None"/ style="width:15% ">
+<label for="fff">Date fin:</label><input id ="fff" type ="date" name="df" style="width:15% "/>
 
-<input type="submit" value="Filtrer" />
+<input type="submit" value="Filtrer" style="width:15% "/>
 </form>  
 </div>    
 <br>
 
-<div id="container"></div>
+<div class="card-body">
 
+  <table class="table table-striped ">
+  <tr>
+  
+      <th>Date vente</th>
+
+      <th>Quantité vendu</th>
+  
+
+  </tr>  
+  {% for ab in dataset %}
+  
+  <tr>
+  <td>{{ab.date_vente}}</td>
+
+  <td>{{ab.totqte}}</td>
+
+  </tr>    
+  {% endfor %} 
+  
+  </table>
+</div>
+
+<div id="container"></div>
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
   Highcharts.chart('container', {
       chart: {
           type: 'line'
       },
       title: {
-          text: 'Ventes du produit {{prdd}}'
+          text: 'Ventes {{prdd}} {{cltt}}'
       },
       xAxis: {
           categories: [
@@ -53,10 +73,12 @@
           ],
           color: 'green'
       }, ]
+      
+      
   });
+
+})
 </script>
-
-
 
 
 {% endblock %}

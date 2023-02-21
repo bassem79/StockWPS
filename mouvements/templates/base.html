@@ -1,323 +1,256 @@
 {% load stock_tags %}
 {% load static %}
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  {%block title%}
+  <title>Gestion de stock</title>
+  {% endblock %}
+  
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/benestar.jpg'  %} " rel='icon'>
 
-    <!-- Title -->
-    {% block title %}
-	<title>Gestion du stock</title>
-    {% endblock  %}
-    <!-- Favicon -->
-    <link rel="icon" href="{% static 'img/benestar.jpg' %}">
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-    <!-- Responsive CSS -->
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'sstyle.css' %}" >
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="{% static 'css/responsive/responsive.css' %}" >
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.5.0
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 
-    <!-- Bootstrap-4 js -->
-    <script src="{% static 'js/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+  <!--bassem form style-->
+<style>
+  form input,textarea {
+    width: 50%;
+    border: 0;
+    border-bottom: 1px solid #aaa;
+    font-size: 16px;
+    font-weight: 800;
+    color: black;
+    letter-spacing: 0.17em;
 
+    &::placeholder {
+      color: #333;
+      font-size: 10px;
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-
-    <style>
-.styled-table {
-    border-collapse: collapse;
-    margin: 0px 0;
-    font-size: 0.8em;
-    font-family: sans-serif;
-    min-width: 600px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-   
+    &:focus {
+      outline: 0;
+      border-bottom: 1px solid rgba($blue, 0.7);
+      transition: 0.6s all ease;
+    }
+  }
 }
-.styled-table th {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-.styled-table th,
-.styled-table td {
-    padding: 5px ;
-}
 
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+input[type=submit] {
+  width: 10%;
+  height: 30px;
+  border: 0;
+  outline: 0;
+  color: white;
+  font-size: 15px;
+  font-weight: 200;
+  position: relative;
+  z-index: 3;
+  background: #8288ff;
+  font-family: arial;
+  cursor: pointer;
 }
+</style>
 
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
 
-td {text-align:center;}
-table.bassem{margin:1%%}
-    </style>
 </head>
 
 <body>
 
-    <div id="preloader">
-        <div class="yummy-load"></div>
-    </div>
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <header class="header_area">
-        <div class="container">
-            <div class="row">
-                <!-- Logo Area Start -->
-                <div class="col-12">
-                    <div class="logo_area text-center">
-                        <a href="{% url 'stock:dashboard' %}" class="yummy-logo">Gestion du stock</a>
-                    </div>
-                </div>
-            </div>
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{% url 'stock:dashboard' %}" class="logo d-flex align-items-center">
+        <img src="{% static 'assets/img/benestar.jpg' %}" alt="">
+        <span class="d-none d-lg-block">WPS-Stock</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+    {% if request.user.is_authenticated %}
+    
+    <div class="search-bar">
 
-            <div class="row">
-                <div class="col-12">
-                    <nav class="navbar navbar-expand-lg">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#yummyfood-nav" aria-controls="yummyfood-nav" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars" aria-hidden="true"></i> Menu</button>
-                        <!-- Menu Area Start -->
-                        <div class="collapse navbar-collapse justify-content-center" id="yummyfood-nav">
-                          {% include "menu.html" %}
-                        </div>
-                    </nav>
-                </div>
-            </div>
+
+      <form action = "{% url 'stock:dashboard' %}" class="search-form d-flex align-items-center">
+        <div class="form-group">
+        <input type="search" name = "q" class="widget-title text-center" size="28"
+               placeholder = "Produit,client,délegué,contact"
+               value ="{{ request.GET.q }}" placeholder="Recherche">
+
+               <button type="submit" title="Chercher"><i class="bi bi-search"></i></button>
         </div>
-    </header>
-    <!-- ****** Header Area End ****** -->
-
-
-
-    <!-- ****** Breadcumb Area End ****** -->
-
-    <!-- ****** Single Blog Area Start ****** -->
-    <section class="single_blog_area section_padding_80">
-        <div class="container">
-
-{% if messages %}
-<ul class="messages">
-{% for message in messages %}
-<div class="alert alert-{{ message.tags }}">
-<li class="{{ message.tags }}">
-{{ message|safe }}
-</li>
-</div>
-{% endfor %}
-</ul>
-{% endif %}
-
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="row no-gutters">
-
-
-
-                        <!-- Single Post -->
-                        <div class="col-10 col-sm-11">
-                            <div class="single-post">
-                                <!-- Post Thumb -->
-
-                                <div class="post-thumb">
-                                    <img src="img/blog-img/10.jpg" alt="">
-                                </div>
-                                {% block content %}
-                                ------------
-                                {% endblock %}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ****** Blog Sidebar ****** -->
-                <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-                    <div class="blog-sidebar mt-5 mt-lg-0">
-                        <!-- Single Widget Area -->
- 
-
-                        {% if request.user.is_authenticated %}
-                        <!-- Single Widget Area -->
-                        <div class="single-widget-area popular-post-widget">
-                            <div class="widget-title text-center">
-                                <h6>Rechercher dans produits</h6>
-                            </div>
-                            <!-- Single Popular Post -->
-                            <div class="single-widget-area popular-post-widget">
-                                 
-                            <form action = "{% url 'stock:produit_list' %}" class="navbar-form navbar-right inline-form">
-                            <div class="form-group">
-                            <input type="search" name = "q" class="widget-title text-center" size="28"
-                                   placeholder = "Nom, Prix, quantite en stock ou Seuil"
-                                   value ="{{ request.GET.q }}" placeholder="Recherche">
-
-                            <button type="submit" class="btn btn-primary btn-sm"> Chercher</button>
-                            </div>
-                            </form>
-
-                            </div>
-                        </div>
-                        {% endif %}
-
-
-
-                        <div class="single-widget-area popular-post-widget">
-                            <div class="widget-title text-center">
-                                <h6>Raccourcis</h6>
-                            </div>
-                            <!-- Single Popular Post -->
-                            {% if request.user.is_authenticated %}
-                            <div class="single-populer-post d-flex">
-                                
-                                <div class="post-content">
-                                    <a href=" {% url 'stock:vente_list' %}"> <h6>Liste des ventes</h6></a>
-                                    <a href=" {% url 'stock:vente_ajouter' %}"> <h6>Ajouter vente</h6></a>
-                                    <a href=" {% url 'stock:produit_ajouter' %}"> <h6>Ajouter produit</h6></a>
-                                    <a href=" {% url 'stock:vente_payement' %}"><h6>Payement vente</h6></a>
-                                    <a href=" {% url 'stock:vente_supprimer' %}"><h6>Supprimer vente</h6></a>
-                                    <a href="{% url 'stock:export_ventes_xls' %}"> <h6>Exporter Excel ventes</h6></a>
-
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="post-content">
-                                <a href=" {% url 'stock:connexion' %}"> <h6>Connexion</h6></a>
-                            </div> 
-                            {% endif %}   
-                        </div>
-
-
-
-                        {% if request.user.is_authenticated %}
-
-                         <div class="single-widget-area popular-post-widget">
-                            <div class="widget-title text-center">
-                                <h6>Derniers événements</h6>
-                            </div>
-                            <!-- Single Popular Post -->
-                            <P>Aujourd'hui {% total_ventes %} ventes</p>
-                            <div class="single-populer-post d-flex">
-                                <div class="post-content">
-                                    <h7>Ventes aujourd'hui: <br></h7>
-                                   {%  get_ventes_today   %}
-                                   
-                                </div>
-                            </div>
-
-
-                        
-                                
-
-                                <div class="single-populer-post d-flex">
-                                    <div class="post-content">
-                                        <h7>Ventes d'hier: <br></h7>
-                                       {%  get_ventes_hier   %}
-                                       
-                                    </div>
-                                </div>
-
-
-                                {% endif %}
-
-
-
-
-                          
-
-                    
-
-
-
-
-
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ****** Single Blog Area End ****** -->
+        </form>
+    </div><!-- End Search Bar -->
+    {% endif %}
 
     
-    <!-- ****** Breadcumb Area Start ****** -->
-    <div class="breadcumb-area" style="background-image: url(img/bg-img/breadcumb.jpg);">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12">
-                    <div class="bradcumb-title text-center">
-                        <h3>Gestion du stock par Miaoui Bassem</h3>
-                    </div>
-                </div>
+
+    <nav class="header-nav ms-auto">
+        {% include 'menu.html' %}
+
+</nav>
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+
+
+
+
+    <div class="single-widget-area popular-post-widget">
+        <div class="widget-title text-center">
+            <h6>Raccourcis</h6>
+        </div>
+        <!-- Single Popular Post -->
+        {% if request.user.is_authenticated %}
+        <div class="single-populer-post d-flex">
+            
+            <div class="post-content">
+                <a href=" {% url 'stock:vente_list' %}"> <h6>Liste des ventes</h6></a>
+                <a href=" {% url 'stock:vente_ajouter' %}"> <h6>Ajouter vente</h6></a>
+                <a href=" {% url 'stock:produit_ajouter' %}"> <h6>Ajouter produit</h6></a>
+                <a href=" {% url 'stock:vente_payement' %}"><h6>Payement vente</h6></a>
+                <a href=" {% url 'stock:vente_supprimer' %}"><h6>Supprimer vente</h6></a>
+                <a href="{% url 'stock:export_ventes_xls' %}"> <h6>Exporter Excel ventes</h6></a>
+
             </div>
         </div>
+        {% else %}
+        <div class="post-content">
+            <a href=" {% url 'stock:connexion' %}"> <h6>Connexion</h6></a>
+        </div> 
+        {% endif %}   
     </div>
 
 
-    <!-- ****** Footer Menu Area Start ****** -->
-    <footer class="footer_area">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="footer-content">
-                        <!-- Logo Area Start -->
 
-                        <!-- Menu Area Start -->
-                        <nav class="navbar navbar-expand-lg">
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#yummyfood-footer-nav" aria-controls="yummyfood-footer-nav" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars" aria-hidden="true"></i> Menu</button>
-                            <!-- Menu Area Start -->
-                            <div class="collapse navbar-collapse justify-content-center" id="yummyfood-footer-nav">
-{%include 'menu.html' %}
+    {% if request.user.is_authenticated %}
 
-                               
-
-
-
-
-                            </div>
-                        </nav>
-                    </div>
-                </div>
+     <div class="single-widget-area popular-post-widget">
+        <div class="widget-title text-center">
+            <h6>Derniers événements</h6>
+        </div>
+        <!-- Single Popular Post -->
+        <P>Aujourd'hui {% total_ventes %} ventes</p>
+        <div class="single-populer-post d-flex">
+            <div class="post-content">
+                <h7>Ventes aujourd'hui: <br></h7>
+               {%  get_ventes_today   %}
+               
             </div>
         </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <!-- Copywrite Text -->
-                    <div class="copy_right_text text-center">
-                        <h5>Copyright @2023 Tous droits réservés - Miaoui Bassem</h5>
-                    </div>
+
+    
+            
+
+            <div class="single-populer-post d-flex">
+                <div class="post-content">
+                    <h7>Ventes d'hier: <br></h7>
+                   {%  get_ventes_hier   %}
+                   
                 </div>
             </div>
-        </div>
-    </footer>
-    <!-- ****** Footer Menu Area End ****** -->
-
-    <!-- Jquery-2.2.4 js -->
-    <script src="{% static 'js/jquery/jquery-2.2.4.min.js' %}"></script>
-    <!-- Popper js -->
-    <script src="{% static 'js/bootstrap/popper.min.js' %}"></script>
-    <!-- Bootstrap-4 js -->
-    <script src="{% static 'js/bootstrap/bootstrap.min.js' %}"></script>
-    <!-- All Plugins JS -->
-    <script src="{% static 'js/others/plugins.js' %}"></script>
-    <!-- Active JS -->
-    <script src="{% static 'js/active.js' %}"></script>
-    <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
 
 
+            {% endif %}
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <a href="{% url 'stock:dashboard' %}"> <h1>Dashboard</h1></a>
+
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-16">
+          <div class="row">
+
+            <div class="col-12">
+            {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+            <li class="{{ message.tags }}">
+            {{ message|safe }}
+            </li>
+            </div>
+            {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
 
 
-    {% block javascript %}
 
-    {% endblock %}
+            <div class="col-12">
+            {% block content %}
+                                
+            {% endblock %}
+            </div>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      Copyright <strong><span>Miaoui Bassem</span></strong>. Tous droits réservés  &copy;
+    </div>
+
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js'%} "></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static 'assets/vendor/chart.js/chart.umd.js'%}"></script>
+  <script src="{% static 'assets/vendor/echarts/echarts.min.js'%}"></script>
+  <script src="{% static 'assets/vendor/quill/quill.min.js'%}"></script>
+  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js'%}"></script>
+  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js'%}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js'%}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js'%}"></script>
+
 </body>
+
+</html>

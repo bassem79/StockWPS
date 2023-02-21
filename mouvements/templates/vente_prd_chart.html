@@ -1,22 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
-  <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_prd_filtre_chart' %}">
+
+<div >
+  <form method="post" action="{% url 'stock:vente_prd_chart' %}" class="form">
       {% csrf_token %}
-  <label for="ddd">Date début:</label>
-  <input id ="ddd" type ="date" name="dd" default = "None"/>
-    
+<label for="prd">Nom produit:</label> 
+<select id="prd" name="prd">
+<option value= "">--Choisir produit--</option>
+{% for ab in prd %}
+{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}{% endfor %}</select>
 
-  <label for="fff">Date fin:</label>
-  <input id ="fff" type ="date" name="df"/>
+<label for="clt">Nom client:</label> 
+<select id="clt" name="clt">
+<option value= "">--Choisir client--</option>
+{% for abb in clt %}
+{% ifchanged %}<option  value="{{abb.nom_client}}">{{abb.nom_client}}</option>{% endifchanged %}{% endfor %}</select>
 
-<input type="submit" value="Filtrer" />
+
+<label for="ddd">Date début:</label><input id ="ddd" type ="date" name="dd" default = "None"/ style="width:15% ">
+<label for="fff">Date fin:</label><input id ="fff" type ="date" name="df" style="width:15% "/>
+
+<input type="submit" value="Filtrer" style="width:15% "/>
 </form>  
 </div>    
 <br>
 
-<div id="container"></div>
+<div class="card-body">
+
+  <table class="table table-striped ">
+<tr>
+
+  <th>Nom Produit</th>
+  <th>Total quantité</th>
+
+
+</tr>
+{% for ab in dataset %}
+<tr>
+  <td style="text-align:left">{{ab.produit__nom_produit}}</td>
+  <td style="text-align:left">{{ab.totqte}}</td>
+
+
+
+</tr>
+{% endfor %}
+</table></div>
+
+
+
+<div id="container" class="echart"></div>
+       
+
 
 <script src="https://code.highcharts.com/highcharts.src.js"></script>
 <script>
@@ -41,6 +76,7 @@
       }, ]
   });
 </script>
+
 
 
 

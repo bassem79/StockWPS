@@ -12,7 +12,9 @@
 
 
 <h3>Liste de tous les échantillons données filtrés:</h3>
-<table class="styled-table" >
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
     <th>Date</th>
     <th>Nom produit</th>
@@ -28,15 +30,17 @@
 {% endfor %}
 </table>
 
+</div>
 
+<div class="card-body">
 
-<table class="styled-table">
+    <table class="table table-striped ">
     <tr>
 <td><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></td>
 <td><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></td>
 
     </tr>        
-</table>  
+</table> </div> 
 {% endblock %}
 
 

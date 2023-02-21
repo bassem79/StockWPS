@@ -9,18 +9,17 @@
 {% endif %}
 
 <div>  <h2>Bienvenue {{user}}</h2>
-    <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
+    <tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td></tr>
 
+    <h4>Veuillez renseigner l'entête de la vente</h4></div>
 <form method="post">
     {% csrf_token %}
 
-<h4>Veuillez renseigner l'entête de la vente</h4></div>
-   <br> <br><div>
-    <form>
-    <table class="styled-table">
+
+
 
         {{form.as_p}}
-    </table>
+
     
         
     <table>  
@@ -52,7 +51,7 @@
      <p> <input type="submit" class="btn btn-success" value="Enregistrer mon choix"></p>
 </form>
 
-</div>
+
 
 <!-- Include formset plugin - including jQuery dependency -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

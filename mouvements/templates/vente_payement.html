@@ -4,9 +4,9 @@
 
 {% block content %}
 <h5>Payement des ventes :</h5>
-<br><br><br><br>
-<div  style="background:pink;border:solid 1px;">
-    <div style="background:pink;">
+<br>
+<div  >
+    <div >
         <form action="{% url 'stock:vente_payement' %}" method="post">
              {% csrf_token %}
             N° BL  <select name="bl">
@@ -26,13 +26,15 @@
     </form></div>   
 </div>
 
-<br><br><br>
+<br><br>
 
 
 {% if request.POST %}
 
 <h3>Corps de la vente:</h3>
-<table class="styled-table" >
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
     <th>Date vente</th>
     <th>Nom client</th>
@@ -52,7 +54,7 @@
     <td>{{ab.price|floatformat:3|intcomma}}</td>
 </tr>
 {% endfor %}
-</table>
+</table></div>
 
 <h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
 <br><br><br>

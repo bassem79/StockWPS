@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Client, Produit,Delegue,VisiteMedicale,Vente,Alimenter_stock,RemiseClient
+from .models import Client, Produit,Delegue,VisiteMedicale,Vente,Alimenter_stock,RemiseClient,Contactclient
 
 
 
@@ -24,10 +24,17 @@ class DelegueAdmin(admin.ModelAdmin):
     
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ['nom_client', 'description','fonction1','telephone1','fonction2','telephone2','fonction3','telephone3','fonction4','telephone4','base_client','type_client','taux_remise']
+    list_display = ['nom_client', 'description','base_client','type_client','taux_remise']
     list_filter = ['nom_client', 'base_client','type_client','taux_remise']
     search_fields = ['nom_client', 'base_client','type_client','taux_remise']
     #prepopulated_fields = {'slug': ('nom_client',)}
+
+@admin.register(Contactclient)
+class ContactclientAdmin(admin.ModelAdmin):
+    list_display = ['client', 'nom_contact','fonction_contact','telephone_contact']
+    list_filter = ['client', 'nom_contact','fonction_contact','telephone_contact']
+    search_fields = ['client', 'nom_contact','fonction_contact','telephone_contact']
+
 
 @admin.register(VisiteMedicale)
 class VisiteMedicaleAdmin(admin.ModelAdmin):

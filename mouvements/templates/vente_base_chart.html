@@ -1,20 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
-  <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_base_chart' %}">
+<div >
+  <form method="post" action="{% url 'stock:vente_base_chart' %}" class="form">
       {% csrf_token %}
-  <label for="ddd">Date début:</label>
-  <input id ="ddd" type ="date" name="dd" default = "None"/>
-    
+<label for="prd">Nom produit:</label> 
+<select id="prd" name="prd">
+<option value= "">--Choisir produit--</option>
+{% for ab in prd %}
+{% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}{% endfor %}</select>
 
-  <label for="fff">Date fin:</label>
-  <input id ="fff" type ="date" name="df"/>
+<label for="clt">Nom client:</label> 
+<select id="clt" name="clt">
+<option value= "">--Choisir client--</option>
+{% for abb in clt %}
+{% ifchanged %}<option  value="{{abb.nom_client}}">{{abb.nom_client}}</option>{% endifchanged %}{% endfor %}</select>
 
-<input type="submit" value="Filtrer" />
+
+<label for="ddd">Date début:</label><input id ="ddd" type ="date" name="dd" default = "None"/ style="width:15% ">
+<label for="fff">Date fin:</label><input id ="fff" type ="date" name="df" style="width:15% "/>
+
+<input type="submit" value="Filtrer" style="width:15% "/>
 </form>  
 </div>    
 <br>
+
+<div class="card-body">
+
+<table class="table table-striped ">
+<tr>
+
+    <th>base</th>
+    <th>Produit</th>
+    <th>Quantité vendu</th>
+
+
+</tr>  
+{% for ab in dataset %}
+
+<tr>
+<td>{{ab.client__base_client}}</td>
+<td>{{ab.produit__nom_produit}}</td>
+<td>{{ab.sumqte}}</td>
+
+</tr>    
+{% endfor %} 
+
+</table>
+</div>
 
 <div id="container"></div>
 <div id="container2"></div>

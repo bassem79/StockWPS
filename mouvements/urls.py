@@ -57,6 +57,16 @@ path('remise/ajouter/', views.remise_ajouter.as_view(), name='remise_ajouter'),
 path('remise/<pk>/update', views.remiseUpdateView.as_view(),name='remise_modifier'), 
 path('remise/<pk>/delete', views.remiseDeleteView.as_view(),name='remise_supprimer'), 
 
+path('remise/<str:id>/ajouter/', views.remise_ajouter_clt, name='remise_ajouter_clt'),
+
+path('contact/recherche/',views.rechercheContact,name='rechercheContact'),
+
+
+path('contact/list/<str:clt>',views.contacts_list,name='contacts_list'),
+path('contact/ajouter/', views.contact_ajouter.as_view(), name='contact_ajouter'),
+path('contact/<pk>/update', views.contactUpdateView.as_view(),name='contact_modifier'), 
+path('contact/<pk>/delete', views.contactDeleteView.as_view(),name='contact_supprimer'), 
+path('contact/<str:id>/ajouter/', views.contact_ajouter_clt, name='contact_ajouter_clt'),
 
 
 path('client/<int:id>/', views.venteClient, name='vente_client_historique'),

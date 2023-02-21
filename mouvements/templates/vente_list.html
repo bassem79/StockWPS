@@ -14,19 +14,22 @@
 
 Filtrer les ventes par période :
 
- <table>
+<div class="card-body">
+
+    <table class="table table-striped " style="text-align:center">
 <tr>
 <td width="5%"><a href="{% url 'stock:vente_list_period' '1' %}">Aujourd'hui</a></td>
 <td><a href="{% url 'stock:vente_list_period' '2' %}">Hier</a></td>
 <td><a href="{% url 'stock:vente_list_period' '3' %}">Cette semaine</a></td>
 <td><a href="{% url 'stock:vente_list_period' '4' %}">Ce mois</a></td>
 <td><a href="{% url 'stock:vente_list'  %}">Tous</a></td>
- </table>
+ </table></div>
 <br>
-<h5 style="background:pink;">Filtrer les ventes par numéro BL/Facture :</h5>
+<h6 >Filtrer les ventes par numéro BL/Facture :</h6>
 
-<div style="background:pink;">
-    <form action="{% url 'stock:vente_bl_facture' %}" method="post">
+
+<div class="search-bar">
+    <form action="{% url 'stock:vente_bl_facture' %}" method="post" class="search-form d-flex align-items-center" >
          {% csrf_token %}
         N° BL  <select name="bl">
             <option value= "None">--Choisir BL--</option>
@@ -47,9 +50,9 @@ Filtrer les ventes par période :
 
 <div>
     <h6>Filtre personnalisée</h6>
-    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:vente_list_filtre' %}">
+    <form   method="post" action="{% url 'stock:vente_list_filtre' %}" class="search-form d-flex align-items-center">
         {% csrf_token %}
-<fieldset>
+
 
 
     <label for="ddd">Date début:</label>
@@ -58,7 +61,7 @@ Filtrer les ventes par période :
 
     <label for="fff">Date fin:</label>
     <input id ="fff" type ="date" name="df"/>
-</fieldset> 
+
   
 
 
@@ -85,14 +88,15 @@ Filtrer les ventes par période :
 </select>    
 
 </fieldset> 
-  <br>
+ 
 <input type="submit" value="Filtrer" />
 </form>  
 </div>    
-<br>
+<br><br>
+<h4>Toutes les ventes </h4>
+<div class="card-body">
 
-<div class="post-author">
-<table class="styled-table">
+    <table class="table table-striped ">
 <tr>
 
     <th>Date vente</th>
@@ -129,11 +133,14 @@ Filtrer les ventes par période :
 </table>
 {% include "pagination.html" with page=posts %}
 <h5>Le montant total des ventes est de  {{somme|floatformat:3|intcomma }} DT</h5>
+</div><br><br>
 
-</div>
-<h6>Ventes non payés:</h6>
-<div class="post-author" >
-    <table class="styled-table">
+
+
+
+<div class="card-body">
+    <h4>Ventes non payés:</h4>
+    <table class="table table-striped ">
     <tr>
     
         <th>Date vente</th>
@@ -170,10 +177,11 @@ Filtrer les ventes par période :
     </table>
     </div>
     <h5> Le montant total des ventes non encore payés est de  {{sommenp|floatformat:3|intcomma }} DT </h5>
+<br><br>
+    <h4>Gratuités:</h4>
+    <div class="card-body">
 
-    <h6>Gratuités:</h6>
-    <div class="post-author">
-        <table class="styled-table">
+        <table class="table table-striped ">
         <tr>
         
             <th>Date vente</th>
@@ -183,7 +191,7 @@ Filtrer les ventes par période :
 
         
             <th>Nom du produit</th>
-            <th>Quantité vendu</th>
+            <th>Quantité </th>
         
 
         </tr>  
@@ -205,10 +213,12 @@ Filtrer les ventes par période :
         </table>
     </div>
 
-<br><table border>
+<br><div class="card-body">
+
+    <table class="table table-striped ">
     <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
     <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
     
-    </table>
+    </table></div>
    
 {% endblock %}

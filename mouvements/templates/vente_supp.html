@@ -4,9 +4,9 @@
 
 {% block content %}
 <h5>Suppression d'une vente :</h5>
-<br><br><br><br>
-<div  style="background:pink;border:solid 1px;">
-    <div style="background:pink;">
+<br><br>
+<div  >
+    <div >
         <form action="{% url 'stock:vente_supprimer' %}" method="post">
              {% csrf_token %}
             N° BL  <select name="bl">
@@ -32,7 +32,9 @@
 {% if request.POST %}
 
 <h3>Corps de la vente:</h3>
-<table class="styled-table" >
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
     <th>Date vente</th>
     <th>Nom client</th>
@@ -52,10 +54,10 @@
     <td>{{ab.price|floatformat:3|intcomma}}</td>
 </tr>
 {% endfor %}
-</table>
+</table></div>
 
 <h3>Total de la vente = {{globalite|floatformat:3|intcomma}}</h3>
-<br><br><br>
+<br><br>
 {% if selected_bl %} <h4 style="border:solid 1px"><a href="{% url 'stock:suppression' bl fact %}">êtes vous sûr de vouloir procéder à la suppression ?? </a> <h4> {% endif %}
 
 {% else %}

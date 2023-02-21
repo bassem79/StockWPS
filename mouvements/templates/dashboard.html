@@ -5,8 +5,43 @@
 
 <div class="content">
 {% block content %}
-<h1>Tableau de bord</h1>
-<br><br><br><br>
+
+{% if query %}
+
+{% if prd %}
+<h6>Produits:</h6>
+{% for ab in prd %}
+<a href="{% url 'stock:produit_list' %}"> &nbsp;{{ab.nom_produit}} &nbsp;  </a>
+{% endfor %} 
+<br><br>   
+{% endif %} 
+
+{% if clt %}
+<h6>Clients:</h6>
+{% for ab in clt %}
+<a href="{% url 'stock:client_list' %}"> &nbsp;{{ab.nom_client}} &nbsp;  </a>
+{% endfor %}   
+<br><br> 
+{% endif %} 
+
+{% if dele %}
+<h6>Délegués:</h6>
+{% for ab in dele %}
+<a href="{% url 'stock:delegue_list' %}"> &nbsp;{{ab.nom_delegue}} &nbsp;  </a>
+{% endfor %}  
+<br><br>  
+{% endif %} 
+
+{% if cont %}
+<h6>Contacts clients:</h6>
+{% for ab in cont %}
+<a href="{% url 'stock:rechercheContact' %}"> &nbsp;{{ab.nom_contact}} &nbsp;  </a>
+{% endfor %}  
+<br><br>  
+{% endif %} 
+
+{% endif %}
+
 {% if seuil%}
 <h3 style="color:red">Stock <b>faible</b> </h3>
 

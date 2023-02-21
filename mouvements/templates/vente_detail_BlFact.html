@@ -4,11 +4,13 @@
 {% block title %}<title>Historique vente par BL/Fact</title>{% endblock %}
 
 {% block content %}
-<table border>
+<div class="card-body">
+
+    <table class="table table-striped ">
     <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
     <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
     
-    </table>
+    </table></div>
 
 
 {% with selected_bl|first as cl %}
@@ -26,7 +28,9 @@
 
 <br><br><br>
 <h3>Détails vente(s) </h3>
-<table class="styled-table">
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
     <th>Date vente </th>
 <th>Numéro BL</th>
@@ -51,10 +55,10 @@
  <td>{{ histo.prix|floatformat:3|intcomma }}</td>
 </tr>   
 {% endfor %}
-</table>
+</table></div>
 
 <h3>Total de la vente = {{somme|floatformat:3|intcomma}}</h3>
-<br><br><br>
+
 {% endblock %}
 
 

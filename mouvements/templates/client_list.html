@@ -12,13 +12,16 @@
 
 
 
-<div class="post-author">
-<table class="styled-table">
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
 <th>Nom client</th>
 <th>Téléphone</th>    
 <th>Base</th>
+<th>Type</th>
 <th>Taux remise</th>
+<th>Gestion contacts</th>
 <th>Gestion remises</th>
 <th>Modifier ?</th>
 <th>Supprimer ?</th>
@@ -29,7 +32,9 @@
 <td>{{ab.nom_client}}</td>
 <td>{{ab.telephone}}</td>
 <td>{{ab.base_client}}</td>
+<td>{{ab.type_client}}</td>
 <td>{{ab.taux_remise}}</td>
+<td><a href="{% url 'stock:contacts_list' ab.nom_client %}">Contacts</a></td>
 <td><a href="{% url 'stock:remises_list' ab.nom_client %}">Remises</a></td>
 <td><a href="{% url 'stock:client_modifier' ab.id%}">Modifier</a></td>
 <td><a href="{% url 'stock:client_supprimer' ab.id%}">Supprimer</a></td>

@@ -8,14 +8,16 @@
 
 {% block content %}
 
-<h3>Liste de(s) {{nambir}} client(s) </h3>
+<h3>Liste de(s) {{nambir}} délegué(s) </h3>
 <br>>
 <h5>Filtrer les délégués par Zone :</h5>
 
 
 
 
-<table>
+<div class="card-body">
+
+    <table class="table table-striped ">
     <tr>
     <td width="5%"><a href="{% url 'stock:delegue_list_zone' 'Nord' %}">Aujourd'hui</a></td>
     <td><a href="{% url 'stock:delegue_list_zone' 'Centre' %}">Centre</a></td>
@@ -23,11 +25,11 @@
     <td><a href="{% url 'stock:delegue_list_zone' 'Sud' %}">Sud</a></td>
     <td><a href="{% url 'stock:delegue_list'  %}">Tous</a></td>
     </tr>
-     </table>
-
+     </table></div>
 <br>
-<div class="post-author">
-<table class="styled-table">
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
 <th>Nom Délegué</th>
 <th>Base</th>    
@@ -44,7 +46,7 @@
 <td><a href="{% url 'stock:delegue_supprimer' ab.id%}">Supprimer</a></td>
 </tr>
 {% endfor %}
-</table>
+</table></div>
 
 
 {% include "pagination.html" with page=posts %}

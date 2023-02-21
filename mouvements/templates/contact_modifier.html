@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} 
+<title>{{ del.client.nom_client }}</title>
+ {% endblock %}
+
+{% block content %}
+
+
+
+<form method="post" enctype='multipart/form-data' > 
+    {% csrf_token %} 
+    {{ form.as_p }} 
+    <input type="submit" value="Enregistrer"> 
+</form> 
+
+<br>
+<table class="styled-table">
+    <tr>
+<td><a href="{% url 'stock:contacts_list' del.client.nom_client %}">Retour vers la Liste des contacts</a></td>
+<td><a href="{% url 'stock:contact_ajouter_clt' del.client.nom_client %}">Ajouter un contact</a></td>
+    </tr>        
+</table>  
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

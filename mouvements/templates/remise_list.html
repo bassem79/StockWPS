@@ -14,8 +14,9 @@
 
 <p>Client {{clt.nom_client}} de type {{clt.type_client}} basé {{clt.base_client}}
 
-<div class="post-author">
-<table class="styled-table">
+    <div class="card-body">
+
+        <table class="table table-striped ">
 <tr>
 <th>date</th>
 <th>Taux</th>    
@@ -34,7 +35,11 @@
 {% endfor %}
 </table>
 
-<br><h6><a style="color:black" href="{% url 'stock:remise_ajouter'  %}">Ajouter remise ?</a></h6>
+<div class="card-body">
+
+    <table class="table table-striped ">
+        <tr><td>
+<a  href="{% url 'stock:remise_ajouter_clt' clt.pk %}">Ajouter remise ?</a></td></tr></table>
 
 
 

@@ -3,10 +3,12 @@
 {% block title %}<title>Ajouter client</title>{% endblock %}
 {% block content %}
     <h1>Ajouter client</h1>
-    <form action="." method="post">
+   
+    <form action="." method="post" class="form">
+        
         {% csrf_token %}
         {{ form.as_p }}
-
+       
 
 
  <a href="{% url 'stock:client_list' %}" class="btn btn-warning">Liste des clients</a>

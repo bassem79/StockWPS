@@ -3,7 +3,7 @@
 {% block title %}<title>Ajouter Délégué</title>{% endblock %}
 {% block content %}
     <h1>Ajouter Délegué</h1>
-    <form action="." method="post">
+    <form action="." method="post" >
         {% csrf_token %}
         {{ form.as_p }}
 

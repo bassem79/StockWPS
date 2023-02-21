@@ -11,9 +11,9 @@
 
 
 <h4>Liste de(s) {{nambir}} ventes(s) </h4>
+<div class="card-body">
 
-<div class="post-author">
-<table class="styled-table">
+    <table class="table table-striped ">
 <tr>
 
     <th>Date vente</th>
@@ -49,11 +49,14 @@
 
 </table>
 <h5>Le montant total des ventes est de  {{somme|floatformat:3|intcomma }} DT</h5>
+</div>
+<br>
 
 </div>
-<h6>Ventes non payés:</h6>
-<div class="post-author" >
-    <table class="styled-table">
+<h4>Ventes non payés:</h4>
+<div class="card-body">
+
+    <table class="table table-striped ">
     <tr>
     
         <th>Date vente</th>
@@ -88,12 +91,14 @@
     {% endfor %} 
     
     </table>
-    </div>
     <h5> Le montant total des ventes non encore payés est de  {{sommenp|floatformat:3|intcomma }} DT </h5>
+    </div>
+   
+<br>
+    <h4>Gratuités:</h4>
+    <div class="card-body">
 
-    <h6>Gratuités:</h6>
-    <div class="post-author">
-        <table class="styled-table">
+        <table class="table table-striped ">
         <tr>
         
             <th>Date vente</th>
@@ -103,7 +108,7 @@
 
         
             <th>Nom du produit</th>
-            <th>Quantité vendu</th>
+            <th>Quantité </th>
         
 
         </tr>  
@@ -125,10 +130,12 @@
         </table>
     </div>
 
-<br><table border>
+<br><div class="card-body">
+
+    <table class="table table-striped ">
     <tr></tr><td><a href="{% url 'stock:vente_list' %}" class="btn btn-info">Liste des ventes</a></td>
     <td><a href="{% url 'stock:vente_ajouter' %}" class="btn btn-info">Ajouter une vente</a></td></tr>
     
-    </table>
+    </table></div>
    
 {% endblock %}

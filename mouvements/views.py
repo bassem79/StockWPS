@@ -33,6 +33,34 @@ import xlwt
 
 def dashboard(request):
     seuil = Produit.objects.filter(quantite_stock__lte = F('seuil'))
+    query = request.GET.get('q')
+    request.session['recherche'] = query
+    if query:
+        prd=Produit.objects.filter(
+            Q(nom_produit__icontains=query)|
+            Q(seuil__icontains=query)|
+            Q(quantite_stock__icontains=query)|
+            Q(prix__icontains=query)
+            ).distinct()
+
+        clt=Client.objects.filter(
+            Q(nom_client__icontains=query)|
+            Q(base_client__icontains=query)|
+            Q(taux_remise__icontains=query)|
+            Q(type_client__icontains=query)
+            ).distinct()
+
+        cont=Contactclient.objects.filter(
+            Q(nom_contact__icontains=query)|
+            Q(fonction_contact__icontains=query)
+            ).distinct()
+        dele=Delegue.objects.filter(
+            Q(nom_delegue__icontains=query)|
+            Q(base__icontains=query)
+            ).distinct()        
+        
+
+
     return render(request, 'dashboard.html', locals())
 
 def user_login(request):
@@ -91,7 +119,7 @@ def changepassword(request):
                     user.save()
                     update_session_auth_hash(request, user)
                     messages.success(request, "mot de passe changé.")
-                    return redirect(reverse('stockconnexion'))
+                    return redirect(reverse('stock:connexion'))
     else:
         form = changepwd()
     return render(request, 'change_password.html', {'form': form})
@@ -101,15 +129,32 @@ def changepassword(request):
 
 
 
+def rechercheContact(request):
+    cont = Contactclient.objects.all()
 
+    if request.session.get('recherche', None):     
+        cont = cont.filter(
+            Q(nom_contact__icontains=request.session['recherche'])|
+            Q(fonction_contact__icontains=request.session['recherche'])
+            ).distinct()
+        del request.session['recherche']
+    return render(request, 'contacts_list.html', {
+                                                'sel':cont,                                        
+                                                   })
 
-
+        
 
 
 @login_required
 def delegue_list(request,zone = None):
     delegue = Delegue.objects.all()
     
+    if request.session.get('recherche', None): 
+        delegue=delegue.filter(
+            Q(nom_delegue__icontains=request.session['recherche'])|
+            Q(base__icontains=request.session['recherche'])
+            ).distinct()
+        del request.session['recherche']
     if zone:
         delegue = delegue.filter(base=zone)
     paginator = Paginator(delegue, 5) # 10 posts in each page
@@ -348,8 +393,8 @@ def vente_list(request,period = None):
 
         elif period == '4' :
             ventes = ventes.filter(date_vente__month = month,date_vente__year= year)   
-     
-    postss = ventes.filter(gratuit=True)
+    
+    postss = ventes.filter(gratuit=True).order_by('-date_vente')
     # ventes = ventes.annotate(total_produit=( Cast('quantite_vendu',output_field=IntegerField()) * Cast('client__taux_remise',output_field=DecimalField())  )) 
     ventes= ventes.exclude(gratuit=True ).order_by("numero_BL","numero_facture")
     
@@ -366,9 +411,9 @@ def vente_list(request,period = None):
         
     #     output_field=DecimalField()))
 
-    ventesnp = ventes.exclude(paye=True)
+    ventesnp = ventes.exclude(paye=True).order_by('-date_vente')
     sommenp = ventesnp.aggregate(Sum('prix'))['prix__sum'] or 0.00
-
+    ventes = ventes.order_by('-date_vente')
 
     paginator = Paginator(ventes, 50) # 10 posts in each page
 
@@ -394,7 +439,7 @@ def vente_list(request,period = None):
                                                    })
 
 
-
+@login_required
 def vente_list_filtre(request):
     
     total=Vente.objects.all()
@@ -452,17 +497,16 @@ def vente_detail(request, bl,facture):
 def produit_list(request):
     prd = Produit.objects.all()
     
-    query = request.GET.get('q')
-    if query:
-        prd=prd.filter(
 
-            Q(nom_produit__icontains=query)|
-            Q(seuil__icontains=query)|
-            Q(quantite_stock__icontains=query)|
-            Q(prix__icontains=query)
-
-        ).distinct()
+    if request.session.get('recherche', None): 
+        prd=Produit.objects.filter(
+            Q(nom_produit__icontains=request.session['recherche'])|
+            Q(seuil__icontains=request.session['recherche'])|
+            Q(quantite_stock__icontains=request.session['recherche'])|
+            Q(prix__icontains=request.session['recherche'])
+            ).distinct()
     
+        del request.session['recherche']
     paginator = Paginator(prd, 5) # 5 posts in each page
     page = request.GET.get('page')
     
@@ -489,6 +533,99 @@ class produit_ajouter(CreateView):
         return (reverse('stock:produit_list'))
 
 
+@login_required
+def contacts_list(request,clt):
+    clt =get_object_or_404(Client,nom_client=clt)
+    
+
+    sel = clt.contacts.all()
+    return render(request, 'contacts_list.html', {'clt':clt,
+                                                'sel':sel,                                        
+                                                   })
+
+
+@login_required
+def contact_ajouter_clt(request,id):
+    clt=get_object_or_404(Client,id=id)
+    rem= None
+    if request.method == 'POST':
+        form = ContactclientForm(request.POST)
+        if form.is_valid():
+            rem= form.save(commit=False)
+            rem.client=clt
+            rem.save()
+            messages.success(request,f'Contact ajoutée avec succés')
+            
+            return redirect('stock:client_list')
+    else:
+        form= ContactclientForm(initial={'client':clt.id})
+    
+    return render(request, 'contact_ajouter.html', {'form': form,
+   
+   
+                                                   }) 
+
+@method_decorator(login_required, name='dispatch')
+class contact_ajouter(CreateView):
+    model = Contactclient
+    form_class = ContactclientForm
+    template_name = "contact_ajouter.html"
+    success_message = "%(contact)s ajouté avec succés"
+    def get_success_url(self):
+        messages.success(self.request,f'Contact ajouté avec succés')
+        return (reverse('stock:client_list'))
+    
+@method_decorator(login_required, name='dispatch')
+class contactUpdateView(UpdateView):
+    # specify the model you want to use
+    model = Contactclient
+
+    fields = [
+        
+        
+        "nom_contact",
+        "fonction_contact",
+        "telephone_contact",
+        
+    ]
+    template_name = "contact_modifier.html"
+    context_object_name = "del"
+    def get_success_url(self):
+        messages.success(self.request,f'Contact mis à jour avec succés')
+        return (reverse('stock:client_list'))
+
+@method_decorator(login_required, name='dispatch')
+class contactDeleteView(DeleteView):
+    model = Contactclient
+    template_name = "contact_effacer.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Contact supprimé avec succés')
+        return (reverse('stock:client_list'))
+
+
+
+@login_required
+def remise_ajouter_clt(request,id):
+    clt=get_object_or_404(Client,id=id)
+    rem= None
+    if request.method == 'POST':
+        form = remiseAjoutForm(request.POST)
+        if form.is_valid():
+            rem= form.save(commit=False)
+            rem.client=clt
+            rem.save()
+            messages.success(request,f'Remise ajoutée avec succés')
+            
+            return redirect('stock:client_list')
+    else:
+        form= remiseAjoutForm(initial={'client':clt.id})
+    
+    return render(request, 'remise_ajouter.html', {'form': form,
+   
+   
+                                                   }) 
+
+
 @method_decorator(login_required, name='dispatch')
 class remise_ajouter(CreateView):
     model = RemiseClient
@@ -498,7 +635,7 @@ class remise_ajouter(CreateView):
         messages.success(self.request,f'Remise ajouté avec succés')
         return (reverse('stock:client_list'))
 
-
+@login_required
 def produit_detail(request, id):
     form=produitAjoutForm()
 
@@ -541,9 +678,17 @@ class produitUpdateView(UpdateView):
 def client_list(request):
     clt = Client.objects.all()
     
-    query = request.GET.get('q')
     
     
+    if request.session.get('recherche', None): 
+        clt=clt.filter(
+            Q(nom_client__icontains=request.session['recherche'])|
+            Q(base_client__icontains=request.session['recherche'])|
+            Q(taux_remise__icontains=request.session['recherche'])|
+            Q(type_client__icontains=request.session['recherche'])
+            ).distinct()
+    
+        del request.session['recherche']
     paginator = Paginator(clt, 10) # 5 posts in each page
     page = request.GET.get('page')
     
@@ -570,7 +715,7 @@ class client_ajouter(CreateView):
         messages.success(self.request,f'Client ajouté avec succés')
         return (reverse('stock:client_list'))
 
-
+@method_decorator(login_required, name='dispatch')
 class remiseUpdateView(UpdateView):
     # specify the model you want to use
     model = RemiseClient
@@ -587,7 +732,7 @@ class remiseUpdateView(UpdateView):
         messages.success(self.request,f'Remise mise à jour avec succés')
         return (reverse('stock:client_list'))
 
-
+@method_decorator(login_required, name='dispatch')
 class delegueUpdateView(UpdateView):
     # specify the model you want to use
     model = Delegue
@@ -602,7 +747,8 @@ class delegueUpdateView(UpdateView):
     def get_success_url(self):
         messages.success(self.request,f'Délegué mis à jour avec succés')
         return (reverse('stock:delegue_list'))
-    
+
+@method_decorator(login_required, name='dispatch')    
 class clientUpdateView(UpdateView):
     # specify the model you want to use
     model = Client
@@ -610,7 +756,7 @@ class clientUpdateView(UpdateView):
     fields = [
         
         "description",
-        "telephone",
+        
         "base_client",
         
         "type_client"
@@ -621,7 +767,7 @@ class clientUpdateView(UpdateView):
         messages.success(self.request,f'Client mis à jour avec succés')
         return (reverse('stock:client_list'))
 
-
+@method_decorator(login_required, name='dispatch')
 class clientDeleteView(DeleteView):
     model = Client
     template_name = "client_effacer.html"
@@ -629,7 +775,7 @@ class clientDeleteView(DeleteView):
         messages.success(self.request,f'Client supprimé avec succés')
         return (reverse('stock:client_list'))
 
-
+@method_decorator(login_required, name='dispatch')
 class remiseDeleteView(DeleteView):
     model = RemiseClient
     template_name = "remise_effacer.html"
@@ -637,6 +783,7 @@ class remiseDeleteView(DeleteView):
         messages.success(self.request,f'Remise supprimé avec succés')
         return (reverse('stock:client_list'))
 
+@login_required
 def produit_detail(request, id):
     form=produitAjoutForm()
 
@@ -1126,13 +1273,26 @@ def vente_max_produit(request,period=None):
 
 @staff_member_required
 def vente_prd_chart(request):
+    
+    prd=Produit.objects.all()
+    clt= Client.objects.all()
     dataset= Vente.objects.filter(gratuit=False)
     dataset = dataset.values('produit__nom_produit') \
         .annotate(totqte=Sum('quantite_vendu')) \
         .order_by('produit__nom_produit')
  
+    if request.method == 'POST':
 
-    return render(request, 'vente_prd_chart.html', {'dataset': dataset})
+        if request.POST['dd']  :
+            dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+        if request.POST['df']  :
+            dataset=dataset.filter(date_vente__lte = request.POST['df'] )  
+        if request.POST['prd']: 
+            dataset = dataset.filter(produit__nom_produit=request.POST['prd'])
+        if request.POST['clt']  : 
+            dataset = dataset.filter(client__nom_client=request.POST['clt'])
+        return render(request, 'vente_prd_chart.html', {'dataset': dataset,'prd':prd,'clt':clt})
+    return render(request, 'vente_prd_chart.html', {'dataset': dataset,'prd':prd,'clt':clt})
 
 @staff_member_required
 def vente_prd_filtre_chart(request):
@@ -1150,14 +1310,26 @@ def vente_prd_filtre_chart(request):
 
 @staff_member_required
 def vente_clt_chart(request):
+    prd=Produit.objects.all()
+    clt= Client.objects.all()
     dataset= Vente.objects.filter(gratuit=False)
     dataset = dataset.values('client__nom_client') \
     .annotate(totqte=Sum('prix')) \
     .order_by('client__nom_client')
        # .annotate(totqte=Sum('prix'), filter=Q(gratuit=False)) \
-   
+    if request.method == 'POST':
+
+        if request.POST['dd']  :
+            dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
+        if request.POST['df']  :
+            dataset=dataset.filter(date_vente__lte = request.POST['df'] )  
+        if request.POST['prd']: 
+            dataset = dataset.filter(produit__nom_produit=request.POST['prd'])
+        if request.POST['clt']  : 
+            dataset = dataset.filter(client__nom_client=request.POST['clt'])
+        return render(request, 'vente_clt_chart.html', {'dataset': dataset,'prd':prd,'clt':clt})
         
-    return render(request, 'vente_clt_chart.html', {'dataset': dataset})
+    return render(request, 'vente_clt_chart.html', {'dataset': dataset,'prd':prd,'clt':clt})
 
 @staff_member_required
 def vente_clt_filtre_chart(request):
@@ -1169,6 +1341,7 @@ def vente_clt_filtre_chart(request):
         dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
     if request.POST['df']  :
         dataset=dataset.filter(date_vente__lte = request.POST['df'] ) 
+        
     return render(request, 'vente_clt_chart.html', {'dataset': dataset})
 
 
@@ -1176,21 +1349,33 @@ def vente_clt_filtre_chart(request):
 def vente_prd_evol_chart(request):
    
     prd=Produit.objects.all()
+    clt= Client.objects.all()
     dataset= Vente.objects.filter(gratuit=False)
-    if request.method == 'POST':
-        if request.POST['prd']  :
-            dataset = Vente.objects.filter(produit__nom_produit=request.POST['prd']) \
-        .values('date_vente') \
+    dataset= dataset.values('date_vente') \
         .annotate(totqte=Sum('quantite_vendu'))   \
         .order_by('date_vente')
+    if request.method == 'POST':
+        if request.POST['prd']: 
+            dataset = dataset.filter(produit__nom_produit=request.POST['prd'])
+        if request.POST['clt']  : 
+            dataset = dataset.filter(client__nom_client=request.POST['clt'])
         if request.POST['dd']  :
             dataset=dataset.filter(date_vente__gte = request.POST['dd'] )
         if request.POST['df']  :
-            dataset=dataset.filter(date_vente__lte = request.POST['df'] )     
-        return render(request, 'vente_prd_evol_chart.html', {'dataset': dataset,'prdd':request.POST['prd']})
-    return render(request, 'vente_prd_evol_chart.html', {'prd':prd})
+            dataset=dataset.filter(date_vente__lte = request.POST['df'] )  
+        
+        
+   
+        return render(request, 'vente_prd_evol_chart.html', {'dataset': dataset,'prdd':request.POST['prd'],
+                                                             
+            'cltt':request.POST['clt']   , 'prd':prd,'clt':clt                                             })
+    return render(request, 'vente_prd_evol_chart.html', {'dataset': dataset,'prd':prd,'clt':clt})
 
+@staff_member_required
 def vente_base_chart(request):
+    
+    prd=Produit.objects.all()
+    clt= Client.objects.all()
     dataset = Vente.objects.filter(gratuit=False)
     dataset2 = Vente.objects.filter(gratuit=False)
     dataset = dataset.values('client__base_client','produit__nom_produit') \
@@ -1207,10 +1392,17 @@ def vente_base_chart(request):
         if request.POST['df']  :
             dataset=dataset.filter(date_vente__lte = request.POST['df'] )
             dataset2=dataset2.filter(date_vente__lte = request.POST['df'] )     
-     
-        return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2})
+        if request.POST['prd']: 
+            dataset = dataset.filter(produit__nom_produit=request.POST['prd'])
+            dataset2 = dataset2.filter(produit__nom_produit=request.POST['prd'])
+        if request.POST['clt']  : 
+            dataset = dataset.filter(client__nom_client=request.POST['clt'])
+            dataset2 = dataset2.filter(client__nom_client=request.POST['clt'])
+        return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2,
+                                                         'prd':prd,'clt':clt})
     
 
-    return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2})
+    return render(request, 'vente_base_chart.html', {'dataset': dataset,'dataset2': dataset2,
+                 'prd':prd,'clt':clt                                    })
    
-    
+

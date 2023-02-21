@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Liste des remises</title>{% endblock %}
+
+
+
+
+{% block content %}
+    
+
+
+<h3>Liste de(s) contact(s) </h3>
+
+{% if clt.nom_client %}
+<p>Client {{clt.nom_client}} de type {{clt.type_client}} basé {{clt.base_client}}
+{% endif %}
+    <div class="card-body">
+
+        <table class="table table-striped ">
+<tr>
+<th>nom_contact</th>
+<th>fonction_contact</th>    
+<th>Téléphone contact ?</th>
+
+</tr> 
+{% for ab in sel %}   
+<tr>
+<td>{{ab.nom_contact}}</td>
+<td>{{ab.fonction_contact}}</td>
+<td>{{ab.telephone_contact}}</td>
+
+<td><a href="{% url 'stock:contact_modifier' ab.id %}">Modifier</a></td>
+<td><a href="{% url 'stock:contact_supprimer' ab.id %}">Supprimer</a></td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="card-body">
+
+    <table class="table table-striped ">
+        <tr><td>
+            {% if clt.pk%}
+<a  href="{% url 'stock:contact_ajouter_clt' clt.pk %}">Ajouter contact ?</a></td></tr></table>
+{% endif %}
+
+
+
+
+</div>
+
+{% endblock %}

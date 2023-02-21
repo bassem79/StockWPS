@@ -10,19 +10,23 @@
 
 <h5>Filtrer les ventes :</h5>
 
-<table>
+<div class="card-body">
+
+    <table class="table table-striped ">
     <tr>
     <td width="5%"><a href="{% url 'stock:vente_client_historique_period' cl.pk '1' %}">Aujourd'hui</a></td>
     <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '2' %}">Hier</a></td>
     <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '3' %}">Cette semaine</a></td>
     <td><a href="{% url 'stock:vente_client_historique_period' cl.pk '4' %}">Ce mois</a></td>
     <td><a href="{% url 'stock:vente_client_historique' cl.pk  %}">Tous</a></td></tr>
-</table>
+</table></div>
     <br>
 
 
 <h3>Détails vente(s)</h3>
-<table class="styled-table">
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
     <th>Date vente </th>
 <th>Numéro BL</th>
@@ -47,13 +51,15 @@
  <td>{{ histo.prix|floatformat:3|intcomma }}</td>
 </tr>   
 {% endfor %}
-</table>
+</table></div>
 
 <h3>Total de la vente = {{somme|floatformat:3|intcomma}}</h3>
-<br><br><br>
+<br>
 <hr>
 <h3>Détails factures non payés</h3>
-<table class="styled-table">
+<div class="card-body">
+
+    <table class="table table-striped ">
     <tr>
     <th>Date vente </th>
     <th>Numéro BL</th>
@@ -78,7 +84,7 @@
      <td>{{ histo.prix|floatformat:3|intcomma }}</td>
     </tr>  
     {% endfor %}
-    </table>
+    </table></div>
     
     <h3>Total de la vente = {{sommenp|floatformat:3|intcomma }}</h3>
 
@@ -87,7 +93,9 @@
     
     <hr>
     <h3>Détails gratuité</h3>
-    <table class="styled-table">
+    <div class="card-body">
+
+        <table class="table table-striped ">
         <tr>
         <th>Date vente </th>
         <th>Numéro BL</th>
@@ -112,7 +120,7 @@
 
         </tr>   
         {% endfor %}
-        </table>    
+        </table>  </div>  
 {% endblock %}
 
 

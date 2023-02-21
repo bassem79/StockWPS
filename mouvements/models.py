@@ -2,7 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class Produit(models.Model):
     nom_produit = models.CharField(max_length=200,unique = True)
@@ -71,14 +72,8 @@ class Client(models.Model):
     nom_client = models.CharField(max_length=200,unique = True)
     #slug = models.SlugField(max_length=200)
     description = models.TextField(blank=True)
-    fonction1= models.CharField(max_length=70,blank=True, null=True)
-    telephone1 = models.CharField(max_length=20,blank=True, null=True)
-    fonction2= models.CharField(max_length=70,blank=True, null=True)
-    telephone2 = models.CharField(max_length=20,blank=True, null=True)
-    fonction3= models.CharField(max_length=70,blank=True, null=True)
-    telephone3 = models.CharField(max_length=20,blank=True, null=True)
-    fonction4= models.CharField(max_length=70,blank=True, null=True)
-    telephone4 = models.CharField(max_length=20,blank=True, null=True)
+   
+   
     base_client = models.CharField(max_length=10, choices=zone, default='nord')
     type_client = models.CharField(max_length=10, choices=type, default='grossiste')
     taux_remise =   models.DecimalField(max_digits=10,decimal_places=0,blank=True, null=True,default=0)
@@ -97,6 +92,13 @@ models.Index(fields=['nom_client']),
         return reverse('stock:client_detail', args=[self.id])
 
 
+class Contactclient(models.Model):
+    client = models.ForeignKey(Client,on_delete=models.PROTECT,related_name='contacts')
+    nom_contact = models.CharField(max_length=100)
+    fonction_contact = models.CharField(max_length=100)
+    telephone_contact = models.CharField(max_length=100)
+    def __str__(self):
+        return f"{self.nom_contact} {self.fonction_contact} {self.client.nom_client}"
 
 class RemiseClient(models.Model)   :
     
@@ -111,10 +113,24 @@ class RemiseClient(models.Model)   :
         self.client.taux_remise = self.taux_remise 
         self.client.save()
         super(RemiseClient,self).save(*args, **kwargs)
+    def delete(self):
+        ab= Client.objects.get(pk=self.client.id)
+
+        super(RemiseClient, self).delete()
+        ab=ab.remiseclient.all()
+        if ab:
+            self.client.taux_remise = ab.last().taux_remise
+        else:
+            self.client.taux_remise = 0
+        self.client.save()
+
+
+    def __str__(self):
+        return f" {self.client.nom_client} - remise {self.taux_remise}% "
 
 class VisiteMedicale(models.Model):
-    delegue= models.ForeignKey(Delegue,on_delete=models.CASCADE,related_name='visitemedicaleDelegue')
-    produit = models.ForeignKey(Produit,on_delete=models.CASCADE,related_name='visitemedicaleProduit')
+    delegue= models.ForeignKey(Delegue,on_delete=models.PROTECT,related_name='visitemedicaleDelegue')
+    produit = models.ForeignKey(Produit,on_delete=models.PROTECT,related_name='visitemedicaleProduit')
     date = models.DateField(auto_now_add=True)
     quantite_donne = models.PositiveIntegerField(default=0)
 
@@ -160,7 +176,8 @@ class Vente(models.Model):
     def __str__(self):
         return f"{self.client.nom_client} à acheté {self.quantite_vendu} du produit {self.produit.nom_produit}"
     
-
+    class Meta:
+        ordering = ['-date_vente']
     
 
 

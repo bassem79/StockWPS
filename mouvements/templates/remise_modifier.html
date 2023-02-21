@@ -18,8 +18,8 @@
 <br>
 <table class="styled-table">
     <tr>
-<td><a href="{% url 'stock:remises_list' del.id %}">Retour vers la Liste des remises</a></td>
-<td><a href="{% url 'stock:remise_ajouter' %}">Ajouter une remise</a></td>
+<td><a href="{% url 'stock:remises_list' del.client.nom_client %}">Retour vers la Liste des remises</a></td>
+<td><a href="{% url 'stock:remise_ajouter_clt' del.client.nom_client %}">Ajouter une remise</a></td>
     </tr>        
 </table>  
 {% endblock %}

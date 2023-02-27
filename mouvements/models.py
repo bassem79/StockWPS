@@ -4,16 +4,17 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from decimal import *
 
 class Produit(models.Model):
     nom_produit = models.CharField(max_length=200,unique = True)
     #slug = models.SlugField(max_length=200)
     image = models.ImageField(upload_to='products/%Y/%m/%d',blank=True)
     description = models.TextField(blank=True)
-    prix = models.DecimalField(max_digits=10,decimal_places=3)
-    quantite_stock = models.PositiveIntegerField(default=0,blank=True, null=True)
-    seuil = models.PositiveIntegerField(default=0,blank=True, null=True)
-
+    prix = models.DecimalField(max_digits=10,decimal_places=3, validators=[MinValueValidator(Decimal('0.1'))])
+    quantite_stock = models.PositiveIntegerField(default=0,validators=[MinValueValidator(1)])
+    seuil = models.PositiveIntegerField(default=0,validators=[MinValueValidator(1)])
+    
     class Meta:
         ordering = ['nom_produit']
         indexes = [
@@ -93,18 +94,18 @@ models.Index(fields=['nom_client']),
 
 
 class Contactclient(models.Model):
-    client = models.ForeignKey(Client,on_delete=models.PROTECT,related_name='contacts')
+    client = models.ForeignKey(Client,on_delete=models.SET_NULL,related_name='contacts', blank=True,null=True)
     nom_contact = models.CharField(max_length=100)
     fonction_contact = models.CharField(max_length=100)
     telephone_contact = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.nom_contact} {self.fonction_contact} {self.client.nom_client}"
+        return str(f"{self.nom_contact} ")
 
 class RemiseClient(models.Model)   :
     
         
     PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]
-    client= models.ForeignKey(Client,on_delete=models.PROTECT,related_name='remiseclient') 
+    client= models.ForeignKey(Client,on_delete=models.SET_NULL,related_name='remiseclient', blank=True,null=True) 
     taux_remise = models.DecimalField(max_digits=3, decimal_places=0, default=0, validators=PERCENTAGE_VALIDATOR)
     date_remise = models.DateField(auto_now_add=True)
     class Meta:
@@ -126,18 +127,18 @@ class RemiseClient(models.Model)   :
 
 
     def __str__(self):
-        return f" {self.client.nom_client} - remise {self.taux_remise}% "
+        return f" remise {self.taux_remise}% "
 
 class VisiteMedicale(models.Model):
-    delegue= models.ForeignKey(Delegue,on_delete=models.PROTECT,related_name='visitemedicaleDelegue')
-    produit = models.ForeignKey(Produit,on_delete=models.PROTECT,related_name='visitemedicaleProduit')
+    delegue= models.ForeignKey(Delegue,on_delete=models.SET_NULL,related_name='visitemedicaleDelegue', blank=True,null=True)
+    produit = models.ForeignKey(Produit,on_delete=models.SET_NULL,related_name='visitemedicaleProduit', blank=True,null=True)
     date = models.DateField(auto_now_add=True)
     quantite_donne = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['date']
     def __str__(self):
-        return f"{self.delegue.nom_delegue} à bénéficié de {self.produit.nom_produit} du produit {self.quantite_donne}"
+        return str(f"quantité produit {self.quantite_donne}")
     def save(self, *args, **kwargs):
         
         if self.quantite_donne > self.produit.quantite_stock:
@@ -147,7 +148,14 @@ class VisiteMedicale(models.Model):
             b.quantite_stock =  b.quantite_stock - self.quantite_donne
             b.save(update_fields=["quantite_stock"])
             super().save(*args, **kwargs)
+    
+    def delete(self):
+        ab= Produit.objects.get(nom_produit = self.produit.nom_produit)
 
+        
+        ab.quantite_stock = ab.quantite_stock + self.quantite_donne
+        super(VisiteMedicale, self).delete()
+        ab.save(update_fields=["quantite_stock"])
 
 class Vente(models.Model):
     payement = (
@@ -157,8 +165,8 @@ class Vente(models.Model):
   ('gratuit', 'gratuit'),
  ) 
 
-    client= models.ForeignKey(Client,on_delete=models.PROTECT,related_name='venteclient')
-    produit = models.ForeignKey(Produit,on_delete=models.PROTECT,related_name='venteproduit')
+    client= models.ForeignKey(Client,on_delete=models.SET_NULL,related_name='venteclient', blank=True,null=True)
+    produit = models.ForeignKey(Produit,on_delete=models.SET_NULL,related_name='venteproduit', blank=True,null=True)
     numero_BL = models.CharField(max_length=200,blank=True, null=True)
     numero_facture = models.CharField(max_length=200,blank=True, null=True)
     quantite_vendu = models.PositiveIntegerField(default=0)
@@ -174,7 +182,7 @@ class Vente(models.Model):
                        self.numero_facture])
 
     def __str__(self):
-        return f"{self.client.nom_client} à acheté {self.quantite_vendu} du produit {self.produit.nom_produit}"
+        return f"{self.quantite_vendu} vendu"
     
     class Meta:
         ordering = ['-date_vente']
@@ -198,11 +206,11 @@ class Vente(models.Model):
 
 
 class Alimenter_stock(models.Model):
-    produit = models.ForeignKey(Produit,on_delete=models.PROTECT,related_name='alimenterproduit')
+    produit = models.ForeignKey(Produit,on_delete=models.SET_NULL,related_name='alimenterproduit', blank=True,null=True)
     quantite_entree = models.PositiveIntegerField(default=0)
     date_entree = models.DateField(auto_now_add=True)
     def __str__(self):
-        return f"le stock de {self.produit.nom_produit} augmenté de  {self.quantite_entree}"
+        return f"stock augmenté de {self.quantite_entree}"
     def save(self, *args, **kwargs):
         b=Produit.objects.get(nom_produit = self.produit.nom_produit)
         b.quantite_stock =  b.quantite_stock + self.quantite_entree

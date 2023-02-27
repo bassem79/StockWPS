@@ -21,6 +21,7 @@
 <th>Pix</th>    
 <th>Quantité stock</th>
 <th>Seuil</th>
+<th>Alimenter ?</th>
 <th>Modifier ?</th>
 <th>Supprimer ?</th>
 </tr> 
@@ -30,6 +31,7 @@
 <td>{{ab.prix}}</td>
 <td>{{ab.quantite_stock}}</td>
 <td>{{ab.seuil}}</td>
+<td><a href="{% url 'stock:produit_alimenter' ab.id%}">Alimenter</a></td>
 <td><a href="{% url 'stock:produit_modifier' ab.id%}">Modifier</a></td>
 <td><a href="{% url 'stock:produit_supprimer' ab.id%}">Supprimer</a></td>
 </tr>

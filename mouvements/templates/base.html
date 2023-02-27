@@ -87,7 +87,7 @@ input[type=submit] {
 </head>
 
 <body>
-
+  <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -105,11 +105,11 @@ input[type=submit] {
 
       <form action = "{% url 'stock:dashboard' %}" class="search-form d-flex align-items-center">
         <div class="form-group">
-        <input type="search" name = "q" class="widget-title text-center" size="28"
+        <input type="search" name = "q" class="widget-title text-center" size="45"
                placeholder = "Produit,client,délegué,contact"
                value ="{{ request.GET.q }}" placeholder="Recherche">
 
-               <button type="submit" title="Chercher"><i class="bi bi-search"></i></button>
+               <button type="submit" title="Chercher"></button>
         </div>
         </form>
     </div><!-- End Search Bar -->
@@ -118,8 +118,8 @@ input[type=submit] {
     
 
     <nav class="header-nav ms-auto">
-        {% include 'menu.html' %}
-
+   
+                  {% include 'menu.html' %}
 </nav>
   </header><!-- End Header -->
 

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}<title>Alimenter stock produit</title>{% endblock %}
+{% block content %}
+    <h1>Alimenter</h1>
+
+    <h6>Produit {{prd.nom_produit}}</h6>
+    <h6>En stock:  {{prd.quantite_stock}}</h6>
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+
+
+
+        <input type="submit" class="btn btn-success" value="Ajouter">
+    </form>
+
+    <br><br><br>
+<H4>Historique </h4>
+    <div class="card-body">
+
+        <table class="table table-striped ">
+<tr>
+<th>date</th>
+<th>Quantité</th>    
+
+</tr> 
+{% for ab in his %}   
+<tr>
+<td>{{ab.date_entree}}</td>
+<td>{{ab.quantite_entree}}</td>
+
+</tr>
+{% endfor %}
+</table>
+
+
+
+
+
+
+
+</div>
+
+{% endblock %}
+

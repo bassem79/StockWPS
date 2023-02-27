@@ -14,7 +14,9 @@
 
 
 <h6>Corps de la vente:</h6>
-<table class="styled-table" >
+<div class="card-body">
+
+    <table class="table table-striped ">
 <tr>
 
     <th>Nom produit</th>
@@ -32,7 +34,7 @@
 </tr>
 
 {% endfor %}
-</table>
+</table></div>
 
 <h5>Total de la vente = {{somme|floatformat:3|intcomma}} TND</h5>
 

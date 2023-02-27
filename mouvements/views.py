@@ -29,7 +29,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 import xlwt
-
+from django.db.models import ProtectedError
 
 def dashboard(request):
     seuil = Produit.objects.filter(quantite_stock__lte = F('seuil'))
@@ -144,6 +144,28 @@ def rechercheContact(request):
 
         
 
+@login_required
+def alimenterStock(request,prd):
+    prd = get_object_or_404(Produit,id = prd)
+    his= prd.alimenterproduit.all()
+    alim= None
+    if request.method == 'POST':
+        form = AlimenterForm(request.POST)
+        if form.is_valid():
+            alim= form.save(commit=False)
+            alim.produit=prd
+            alim.save()
+            messages.success(request,f'Alimentation du stock ajoutée avec succés')
+            
+            return redirect('stock:produit_list')
+    else:
+        form= AlimenterForm(initial={'produit':prd.id})
+    
+    return render(request, 'produit_alimenter.html', {'form': form,
+                                                        'prd':prd,
+                                                        'his':his,
+   
+                                                   }) 
 
 @login_required
 def delegue_list(request,zone = None):
@@ -225,12 +247,16 @@ class delegue_ajouter(CreateView):
 @method_decorator(login_required, name='dispatch')
 class delegue_supprimer(DeleteView):
     model = Delegue
-    # success_url ="stock:delegue_list"
+    #success_url ="stock:delegue_list"
     template_name = "delegue_supprimer.html"
+
+
+    
     def get_success_url(self):
         messages.success(self.request,f'Délégué supprimé avec succés')
-        return (reverse('stock:delegue_list'))
-
+        return HttpResponseRedirect(reverse('stock:delegue_list'))
+    
+    
 @method_decorator(login_required, name='dispatch')
 class produit_supprimer(DeleteView):
     model = Produit
@@ -239,7 +265,7 @@ class produit_supprimer(DeleteView):
     def get_success_url(self):
         messages.success(self.request,f'Produit supprimé avec succés')
         return (reverse('stock:produit_list'))
-
+    
 @login_required
 def visite_ajouter(request):
 
@@ -260,6 +286,17 @@ def visite_ajouter(request):
         form = VisiteAjoutForm()
 
     return render(request, 'Visite_ajouter.html', locals())           
+
+
+@method_decorator(login_required, name='dispatch')
+class visite_supprimer(DeleteView):
+    model = VisiteMedicale
+    
+    template_name = "visite_supprimer.html"
+    def get_success_url(self):
+        messages.success(self.request,f'Echantillons supprimés avec succés')
+        return (reverse('stock:delegue_list'))
+
 
 
 def remises_list(request,clt):

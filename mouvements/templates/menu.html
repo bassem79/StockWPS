@@ -1,11 +1,12 @@
-
+{% load static %}
+<ul class="d-flex align-items-center">
 {% if request.user.is_authenticated %}
 
 
 
 
 
-      <ul class="d-flex align-items-center">
+      
 
         
 
@@ -13,7 +14,7 @@
           
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span>Profile</span>
             <span class="d-none d-md-block dropdown-toggle ps-2"> {{request.user}}</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -46,8 +47,9 @@
 
         <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Produits</span>
+              <span>P</span>
+
+              <span  class="d-none d-md-block dropdown-toggle ">roduits</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -71,8 +73,8 @@
 
           <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Clients</span>
+              <span>C</span>
+              <span class="d-none d-md-block dropdown-toggle ">lients</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -114,8 +116,8 @@
               
           <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Délegués</span>
+              <span>D</span>
+              <span class="d-none d-md-block dropdown-toggle ">élegués</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -149,8 +151,8 @@
                    
            <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Ventes</span>
+              <span>V</span>
+              <span class="d-none d-md-block dropdown-toggle ">entes</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -190,8 +192,8 @@
 
           <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Export Excel</span>
+              <span>E</span>
+              <span class="d-none d-md-block dropdown-toggle ">xport Excel</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -233,8 +235,8 @@
           
           <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-             
-              <span class="d-none d-md-block dropdown-toggle ps-2">Synthèse</span>
+              <span>S</span>
+              <span class="d-none d-md-block dropdown-toggle ">ynthèse</span>
             </a><!-- End Profile Iamge Icon -->
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li>
@@ -285,14 +287,35 @@
       {% else %}
  
 
-      <ul class="nav justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'stock:connexion' %}">Connexion</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'stock:init_password' %}">Initialiser mon mot de passe</a>
-        </li>
-        
-      </ul>
 
+
+
+      <li class="nav-item dropdown pe-3">
+        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+          <span>C</span>
+          <span >onnexion</span>
+        </a><!-- End Profile Iamge Icon -->
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+
+
+
+              <li>
+                <a class="dropdown-item" href="{% url 'stock:connexion' %}">
+                    <i class="bi bi-unlock"></i>
+                <span>Connexion</span>
+                </a>
+    
+
+                <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                    <a class="dropdown-item" href="{% url 'stock:init_password' %}">
+                  <i class="bi bi-battery-charging"></i>
+                  <span>Initialiser mon mot de passe</span>
+                  </a>
+
+                  
+            </ul>
+      </li>
+    </ul>
 {% endif %}

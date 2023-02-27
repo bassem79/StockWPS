@@ -20,6 +20,7 @@ path('delegue/<pk>/update', views.delegueUpdateView.as_view(),name='delegue_modi
 
 path('vente/ajouter/', views.Vente_ajouter,name='vente_ajouter'),
 path('visite/', views.visite_ajouter,name='visite_ajouter'),
+path('visite/supprimer/<pk>/', views.visite_supprimer.as_view(),name='visite_supprimer'),
 
 
 path('vente/filtre/', views.vente_list_filtre, name='vente_list_filtre'),
@@ -43,6 +44,7 @@ path('produit/ajouter/', views.produit_ajouter.as_view(), name='produit_ajouter'
 path('produit/<int:id>/', views.produit_detail, name='produit_detail'),
 path('produit/<pk>/update', views.produitUpdateView.as_view(),name='produit_modifier'), 
 path('produit/supprimer/<pk>/', views.produit_supprimer.as_view(),name='produit_supprimer'),
+path('produit/alimenter/<str:prd>/', views.alimenterStock, name='produit_alimenter'),
 
 
 

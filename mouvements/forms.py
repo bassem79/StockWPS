@@ -20,6 +20,14 @@ class produitAjoutForm(forms.ModelForm):
         model = Produit
         fields = '__all__'
 
+
+class AlimenterForm(forms.ModelForm):
+    class Meta:
+        model = Alimenter_stock
+        fields = ['quantite_entree',]
+
+
+
 class clientAjoutForm(forms.ModelForm):
     class Meta:
         model = Client

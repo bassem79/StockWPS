@@ -8,11 +8,12 @@
 </style>
 
 <h2>Le délégué {{ delegue.nom_delegue }} est basé sur <em>{{ delegue.base }} </em></h2>
-<br>
+
 <div>
-    <form style="background:pink;font-size:14px;color:gray;"  method="post" action="{% url 'stock:delegue_detail_filtre' delegue.id %}">
+    <h6>Filtre personnalisée</h6>
+    <form   method="post" action="{% url 'stock:delegue_detail_filtre' delegue.id %}" class="search-form d-flex align-items-center">
         {% csrf_token %}
-<fieldset>
+
 
 
     <label for="ddd">Date début:</label>
@@ -21,7 +22,7 @@
 
     <label for="fff">Date fin:</label>
     <input id ="fff" type ="date" name="df"/>
-</fieldset> 
+
   
 
 
@@ -29,33 +30,34 @@
     
     <select id="prd" name="prd">
         <option value= "None">--Choisir produit--</option>
-{% for ab in selected_prd %}
+{% for ab in selected_prd  %}
 
 {% ifchanged %}<option  value="{{ab.nom_produit}}">{{ab.nom_produit}}</option>{% endifchanged %}
 {% endfor %}
 </select>  
 
 
-
-</fieldset> 
-  <br>
+ 
 <input type="submit" value="Filtrer" />
 </form>  
 </div>    
-<br>
+<br><br>
+
 
 <h3>Liste de tous les échantillons données:</h3>
-<table class="styled-table" >
+<table  class="table table-striped ">
 <tr>
     <th>Date</th>
     <th>Nom produit</th>
     <th>Quantité donnée </th>
+    <th>Supprimer ? </th>
 </tr>
 {% for ab in total %}
 <tr>
     <td>{{ab.date}}</td>
     <td>{{ab.produit.nom_produit}}</td>
     <td>{{ab.quantite_donne}}</td>
+    <td><a href="{% url 'stock:visite_supprimer' ab.id%}">Supprimer</a></td>
 
 </tr>
 {% endfor %}
@@ -66,7 +68,7 @@
 
 
 <h2>Synthèse des échantillons mensuels:</h2>
-<table class="styled-table">
+<table class="table table-striped ">
 <tr>
 
     <th>Nom produit</th>
@@ -84,7 +86,7 @@
 
 <hr>
 <h2>Synthèse des échantillons annuels:</h2>
-<table class="styled-table" >
+<table class="table table-striped " >
 <tr>
 
     <th>Nom produit</th>
@@ -103,7 +105,7 @@
 <br>
 
 
-<table class="styled-table">
+<table class="table table-striped ">
     <tr>
 <td><a href="{% url 'stock:delegue_list' %}">Retour vers la Liste des délégues</a></td>
 <td><a href="{% url 'stock:delegue_ajouter' %}">Ajouter un délégué</a></td>

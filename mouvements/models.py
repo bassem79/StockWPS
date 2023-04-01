@@ -11,7 +11,7 @@ class Produit(models.Model):
     #slug = models.SlugField(max_length=200)
     image = models.ImageField(upload_to='products/%Y/%m/%d',blank=True)
     description = models.TextField(blank=True)
-    prix = models.DecimalField(max_digits=10,decimal_places=3, validators=[MinValueValidator(Decimal('0.1'))])
+    prix = models.DecimalField(max_digits=10,decimal_places=3, validators=[MinValueValidator(Decimal('0.1'))],default=0)
     quantite_stock = models.PositiveIntegerField(default=0,validators=[MinValueValidator(1)])
     seuil = models.PositiveIntegerField(default=0,validators=[MinValueValidator(1)])
     
@@ -99,7 +99,7 @@ class Contactclient(models.Model):
     fonction_contact = models.CharField(max_length=100)
     telephone_contact = models.CharField(max_length=100)
     def __str__(self):
-        return str(f"{self.nom_contact} ")
+        return f"{self.nom_contact} "
 
 class RemiseClient(models.Model)   :
     
@@ -127,7 +127,7 @@ class RemiseClient(models.Model)   :
 
 
     def __str__(self):
-        return f" remise {self.taux_remise}% "
+        return {self.taux_remise}
 
 class VisiteMedicale(models.Model):
     delegue= models.ForeignKey(Delegue,on_delete=models.SET_NULL,related_name='visitemedicaleDelegue', blank=True,null=True)
@@ -138,7 +138,7 @@ class VisiteMedicale(models.Model):
     class Meta:
         ordering = ['date']
     def __str__(self):
-        return str(f"quantité produit {self.quantite_donne}")
+        return {self.quantite_donne}
     def save(self, *args, **kwargs):
         
         if self.quantite_donne > self.produit.quantite_stock:

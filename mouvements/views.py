@@ -254,7 +254,7 @@ class delegue_supprimer(DeleteView):
     
     def get_success_url(self):
         messages.success(self.request,f'Délégué supprimé avec succés')
-        return HttpResponseRedirect(reverse('stock:delegue_list'))
+        return (reverse('stock:delegue_list'))
     
     
 @method_decorator(login_required, name='dispatch')
@@ -295,7 +295,7 @@ class visite_supprimer(DeleteView):
     template_name = "visite_supprimer.html"
     def get_success_url(self):
         messages.success(self.request,f'Echantillons supprimés avec succés')
-        return (reverse('stock:delegue_list'))
+        return (reverse_lazy('stock:delegue_list'))
 
 
 
@@ -1067,7 +1067,7 @@ def payement(request,bl=None,fact=None):
         
     messages.success(request, f'Le payement à été correctement effectué pour {bl} {fact}')
     #return redirect(reverse('stock:vente_payement'))
-    return HttpResponseRedirect(reverse('stock:vente_payement'))
+    return (reverse('stock:vente_payement'))
 
 @login_required
 def vente_supprimer(request):
@@ -1131,7 +1131,7 @@ def suppression(request,bl=None,fact=None):
         
     messages.success(request, f'La vente à été correctement supprimé pour {bl} {fact}')
     #return redirect(reverse('stock:vente_payement'))
-    return HttpResponseRedirect(reverse('stock:vente_supprimer'))
+    return (reverse('stock:vente_supprimer'))
 
 
 @login_required

@@ -113,12 +113,15 @@ class RemiseClient(models.Model)   :
     def save(self, *args, **kwargs):
         self.client.taux_remise = self.taux_remise 
         self.client.save()
+        
+
         super(RemiseClient,self).save(*args, **kwargs)
     def delete(self):
         ab= Client.objects.get(pk=self.client.id)
 
         super(RemiseClient, self).delete()
         ab=ab.remiseclient.all()
+       
         if ab:
             self.client.taux_remise = ab.last().taux_remise
         else:
@@ -127,8 +130,9 @@ class RemiseClient(models.Model)   :
 
 
     def __str__(self):
-        return {self.taux_remise}
-
+       
+        return f"{self.taux_remise}%"
+    
 class VisiteMedicale(models.Model):
     delegue= models.ForeignKey(Delegue,on_delete=models.SET_NULL,related_name='visitemedicaleDelegue', blank=True,null=True)
     produit = models.ForeignKey(Produit,on_delete=models.SET_NULL,related_name='visitemedicaleProduit', blank=True,null=True)
@@ -167,7 +171,7 @@ class Vente(models.Model):
 
     client= models.ForeignKey(Client,on_delete=models.SET_NULL,related_name='venteclient', blank=True,null=True)
     produit = models.ForeignKey(Produit,on_delete=models.SET_NULL,related_name='venteproduit', blank=True,null=True)
-    numero_BL = models.CharField(max_length=200,blank=True, null=True)
+    numero_BL = models.CharField(max_length=200)
     numero_facture = models.CharField(max_length=200,blank=True, null=True)
     quantite_vendu = models.PositiveIntegerField(default=0)
     montant_remise = models.DecimalField(max_digits=10,decimal_places=3,blank=True, null=True,default=0)

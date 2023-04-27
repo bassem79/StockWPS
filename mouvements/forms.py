@@ -44,8 +44,10 @@ class Entetevente(forms.ModelForm):
         class Meta:
             model = Vente
             fields = ['client','numero_BL','numero_facture','moyen_payement','paye','gratuit']
-
-
+        # def clean_bl(self):
+        #     cd = self.cleaned_data
+        #     if cd['numero_BL'] is None and cd["numero_facture"] is None: 
+        #         raise forms.ValidationError("Erreur il faut remplir au moins le champs Numéro BL")
 
 class ContactclientForm(forms.ModelForm):
     class Meta:
